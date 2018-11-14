@@ -32,18 +32,21 @@
             <img style="margin-right: 20px" src="css/logo.jpg" class="rounded-circle">
 
                                        <!-- search input box -->
-<form>
-<div class="form-group input-group">
-    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-</div>
-          
-            </form>
+
+            <!--<form class="form-inline">-->
+                <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+                <!--<button class="btn btn-outline-dark" type="submit" >-->
+                    <!--<ion-icon name="search"></ion-icon>-->
+                <!--</button>-->
+            <!--</form>-->
+
+            <h1 aria-label="Search" align="center" style="color: darkgray"> H O M E P A G E </h1>
 
             <nav class="nav">
                 <a class="nav-link active" href="#">HOME PAGE</a>
-                <div style="margin: 10px; width: 2px; height: 20px; background-color: red"></div>
+                <div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>
                 <a class="nav-link" href="#">WISHLIST</a>
-                <div style="margin: 10px; width: 2px; height: 20px; background-color: red"></div>
+                <div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>
                 <a class="nav-link" href="#">MY PLACE</a>
             </nav>
 
@@ -51,35 +54,116 @@
 
         </div>
 
-        <h1 aria-label="Search" align="center" style="color: darkgray"> H O M E P A G E </h1>
+
 
         <div class="container-fluid">
             <div class="row">
+
+
+                <!--side filter bar-->
                 <div class="col-sm-2">
-                    <!--边栏内容-->
-                    <!--ToDo: fixed on top left-->
                     <ul class="list-group">
-                        <li class="list-group-item">Food</li>
-                        <li class="list-group-item">Landscape</li>
-                        <li class="list-group-item">Culture</li>
-                        <li class="list-group-item">Entertainment</li>
-                        <li class="list-group-item">Accommodation</li>
-                        <li class="list-group-item">Max Distance</li>
-                        <!--ToDo: slider-->
-                        <li class="list-group-item dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Display Style
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">tags</a>
-                                <a class="dropdown-item" href="#">Pictures</a>
+                        <li class="list-group-item">
+                            <div class="form-check">
+                                <label>
+                                    <input type="checkbox" name="check"> <span class="label-text">Food</span>
+                                </label>
                             </div>
                         </li>
+                        <li class="list-group-item">
+                            <div class="form-check">
+                                <label>
+                                    <input type="checkbox" name="check"> <span class="label-text">Landscape</span>
+                                </label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-check">
+                                <label>
+                                    <input type="checkbox" name="check"> <span class="label-text">Culture</span>
+                                </label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-check">
+                                <label>
+                                    <input type="checkbox" name="check"> <span class="label-text">Entertainment</span>
+                               </label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-check">
+                                <label>
+                                    <input type="checkbox" name="check"> <span class="label-text">Accommodation</span>
+                                </label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="range-field w-100">
+                                <span class="label-text">Max Distance: </span>
+                                <input type="range" min="0" max="20" />
+                            </div>
+                        </li>
+                        <!--ToDo: display mode-->
+                        <!--<li class="list-group-item dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                            <!--Display Style-->
+                            <!--<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+                                <!--<a class="dropdown-item" href="#">tags</a>-->
+                                <!--<a class="dropdown-item" href="#">Pictures</a>-->
+                            <!--</div>-->
+                        <!--</li>-->
                     </ul>
                 </div>
-                <div class="col-sm-10">
-                    <!--主体内容-->
 
 
-<div id="map"></div>
+                <!--main part-->
+                <div class="col-sm-8" >
+                    <div id="map" style="width: 80vw; height:80vh;"></div>
+                    <form>
+                        <div class="form-group input-group">
+                            <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                        </div>
+                    </form>
+
+
+                    <!--recommendations-->
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="card" style="width: 18rem;">
+                                    <img class="card-img-top" src="css/landview_1.jpg" alt="Card image cap">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Card title</h5>
+                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="card" style="width: 18rem;">
+                                    <img class="card-img-top" src="css/food.jpeg" alt="Card image cap">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Card title</h5>
+                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="card" style="width: 18rem;">
+                                    <img class="card-img-top" src="css/entertainment.jpg" alt="Card image cap">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Card title</h5>
+                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+
+
                 </div>
             </div>
         </div>
