@@ -1,6 +1,6 @@
 const clientID='4ACEA4ZFEMXM2KWH3U54K0AMSKQRFGK4VQCEUDVPQVIF1QXZ';
 const clientSecret='1IBYDVIO1PCMHVCWRTEDKEHCQ0MKFI1NE45FFT0UIKOISCGU';
-var search = new Vue({
+var app = new Vue({
     el: '#app',
     data: {
         message: 'Hello Vue!',
@@ -24,9 +24,15 @@ var search = new Vue({
             "Sight": 20,
             "Coffee": 5,
             "Drinks": 5,
-            "Arts": 2,
+            "Arts": 20,
             "Outdoors": 30,
             "Shops": 5,
+            "Stop#1": 30,
+            "Stop#2": 30,
+            "Stop#3": 30,
+            "Stop#4": 30,
+        },
+        sliderValue: {
             "Stop#1": 30,
             "Stop#2": 30,
             "Stop#3": 30,
@@ -112,7 +118,7 @@ var search = new Vue({
                     if(item.venue.categories.length > 0){
                         tmp.category=item.venue.categories[0].name;
                     }
-                    search.recommendList.push(tmp);
+                    app.recommendList.push(tmp);
                 });
             } else {
                 console.log("fetch data error");
@@ -158,7 +164,7 @@ var search = new Vue({
                 var myMark = new google.maps.Marker({
                     map: map,
                     title: item.name,
-                    position: search.recommendList[index].geoCode
+                    position: app.recommendList[index].geoCode
                 });
                 var infowindow = new google.maps.InfoWindow({
                     content: item.name

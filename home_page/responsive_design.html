@@ -82,10 +82,10 @@
                 <p>Start from</p>
 
                 <!--search box for setting start location-->
-                <div>
-                    <input id="address" type="textbox" value="Sydney, NSW">
-                    <input id="submit" type="button" value="Geocode">
-                </div>
+                <!--<div>-->
+                    <!--<input id="address" type="textbox" value="Sydney, NSW">-->
+                    <!--<input id="submit" type="button" value="Geocode">-->
+                <!--</div>-->
             </div>
 
 
@@ -97,12 +97,12 @@
                                 {{ stops[n-1] }}
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <button class="dropdown-item" v-for="each in category" @click="stops.splice(n-1, 1, each)">{{ each }}</button>
+                                <button class="dropdown-item" v-for="each in category" @click="stops.splice(n-1, 1, each); sliderValue['Stop#'+n] = defaultValue[stops[n-1]];">{{ each }}</button>
                             </div>
                         </div>
                         <div>
-                            <input class="custom-range" type="range" min="0" max="50" step="1" v-model="defaultValue[stops[n-1]]">
-                            {{ defaultValue[stops[n-1]] + "km" }}
+                            <input class="custom-range" type="range" min="0" max="50" step="1" v-model="sliderValue['Stop#'+n]">
+                            {{ sliderValue['Stop#' + n] + "km" }}
                         </div>
                     </li>
                 </ul>
