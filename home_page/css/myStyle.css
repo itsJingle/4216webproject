@@ -5,6 +5,7 @@
         margin: 0;
         padding: 0;
       }
+
       #description {
         font-family: Roboto;
         font-size: 15px;
@@ -79,10 +80,7 @@
     font-size: 20px;
     alignment: center;
 }
-button{
-    width: 60px;
-    height: 30px;
-}
+
 .rounded-circle{
     width: 40px;
     height: 40px;
