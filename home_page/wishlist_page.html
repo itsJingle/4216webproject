@@ -48,7 +48,7 @@
         <!--</form>-->
 
         <div class="navPageName">
-            <h1 style="text-align: center; font-family: Impact; color: darkorange"> HOME PAGE</h1>
+            <h1 style="text-align: center; font-family: Impact; color: darkorange"> WISHLIST</h1>
         </div>
 
         <div class="navSearch">
@@ -57,9 +57,9 @@
 
         <div class="navPageLink">
             <nav class="nav" style="float: end">
-                <a class="nav-link active" href="#" style="color: darkorange">HOME PAGE</a>
+                <a class="nav-link active" href="http://localhost:63342/4216project/home_page/responsive_design.html?_ijt=sjmp3l7afd1bkrd5dkqg9cmc0b" style="color: darkgray">HOME PAGE</a>
                 <div style="margin: 10px; width: 2px; height: 17px; background-color: red"></div>
-                <a class="nav-link" href="http://localhost:63342/4216project/home_page/wishlist_page.html?_ijt=sjmp3l7afd1bkrd5dkqg9cmc0b" style="color: darkgray">WISHLIST</a>
+                <a class="nav-link" href="#" style="color: darkorange">WISHLIST</a>
                 <!--<div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>-->
                 <!--<a class="nav-link" href="#">MY PLACE</a>-->
             </nav>
@@ -76,66 +76,31 @@
     <!--main content-->
     <div class="mainContent" >
 
-        <!--plan block-->
-        <div id="planBlock">
-
-            <!--start place-->
-            <div>
-                <!--Todo: add to wishlist-->
-                <button style="float: right" type="button" class="btn btn-warning" @click="like = !like">
-                    <ion-icon v-if="!like" name="heart" style="color: white"></ion-icon>
-                    <ion-icon v-if="like" name="heart" style="color: red"></ion-icon>
-                </button>
-
-                <!--Todo: update the start place after setting the origin, default is current location-->
-                <p style="color: darkslategrey">Start from</p>
-                <p style="color: darkorange">{{ startPlace }}</p>
-
-                <!--search box for setting start location-->
-                <!--<div>-->
-                    <!--<input id="address" type="textbox" value="Sydney, NSW">-->
-                    <!--<input id="submit" type="button" value="Geocode">-->
-                <!--</div>-->
-            </div>
-
-            <!--stop list-->
-            <div>
-                <ul class="list-group">
-                    <li class="list-group-item" v-for="n in 4">
-                        <div class="dropdown">
-                            <button class="equalWBtn btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ stops[n-1] }}
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <button class="dropdown-item" v-for="each in category" @click="stops.splice(n-1, 1, each); sliderValue['Stop#'+n] = defaultValue[stops[n-1]];">{{ each }}</button>
-                            </div>
-                        </div>
-                        <div>
-                            <input class="custom-range" type="range" min="0" max="50" step="1" v-model="sliderValue['Stop#'+n]">
-                            {{ sliderValue['Stop#' + n] + "km" }}
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-
-            <!--compute route button-->
-            <div style="padding-top: 10px">
-                <!--Todo: click to compute the route-->
-                <button style="width: 100%" type="button" class="btn btn-warning">Go!</button>
-            </div>
-
-
+        <!--Todo: update user wishlist-->
+        <!--wishlist block-->
+        <div style="padding: 5%;">
+            <ul class="list-group" v-for="each in wishlist">
+                <li class="list-group-item">
+                    <button type="button" class="btn btn-outline-warning">{{ each.Origin }}</button>
+                    <button type="button" class="btn btn-outline-warning">{{ each.Stop1 }}</button>
+                    <button type="button" class="btn btn-outline-warning">{{ each.Stop2 }}</button>
+                    <button type="button" class="btn btn-outline-warning">{{ each.Stop3 }}</button>
+                    <button type="button" class="btn btn-outline-warning">{{ each.Stop4 }}</button>
+                    <!--Todo: display the route on the map-->
+                    <button type="button" class="btn btn-outline-warning">Display on the Map</button>
+                </li>
+            </ul>
         </div>
 
-
-
         <!--map block-->
-        <div id="mapBlock">
+        <div style="padding: 5%;">
             <div id="map"></div>
         </div>
 
     </div>
+
+
+
 
 
 </div>

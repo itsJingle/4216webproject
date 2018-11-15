@@ -13,28 +13,28 @@ p {
     font-weight: bold;
 }
 
-#navLogo {
+.navLogo {
     width: 5%;
 }
 
-#navPageName {
+.navPageName {
     width: 35%;
 }
 
-#navSearch {
+.navSearch {
     width: 30%;
     text-align: center;
 }
 
-#navPageLink {
+.navPageLink {
     width: 25%;
 }
 
-#navLogin {
+.navLogin {
     width: 5%;
 }
 
-#mainContent {
+.mainContent {
     padding: 20px;
 }
 
@@ -140,25 +140,25 @@ ion-icon {
 
 
 @media screen and (max-width: 1050px){
-    #navLogo {
+    .navLogo {
         width: 15%;
     }
 
-    #navPageName {
+    .navPageName {
         width: 85%;
     }
 
-    #navSearch {
+    .navSearch {
         width: 100%;
         text-align: center;
         margin-bottom: 10px;
     }
 
-    #navPageLink {
+    .navPageLink {
         width: 85%;
     }
 
-    #navLogin {
+    .navLogin {
         width: 15%;
     }
 }
