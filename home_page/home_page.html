@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <title>Home Page</title>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -20,168 +20,178 @@
     <script src="https://unpkg.com/ionicons@4.4.6/dist/ionicons.js"></script>
     <script type="text/javascript" src="js/googlemap.js"></script>
 
+
 </head>
 
 <body>
 
-    <div id="app">
+<div id="app">
 
-        <!--navigation bar-->
-        <div class="navbar navbar-light bg-light">
+    <!--navigation bar-->
+    <div class="navbar navbar-light bg-light ">
 
-            <img style="margin-right: 20px" src="css/logo.jpg" class="rounded-circle">
+        <img style="margin-right: 20px" src="css/logo.jpg" class="rounded-circle">
 
-                                       <!-- search input box -->
+        <!-- search input box -->
 
-            <!--<form class="form-inline">-->
-                <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
-                <!--<button class="btn btn-outline-dark" type="submit" >-->
-                    <!--<ion-icon name="search"></ion-icon>-->
-                <!--</button>-->
-            <!--</form>-->
+        <!--<form class="form-inline">-->
+        <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+        <!--<button class="btn btn-outline-dark" type="submit" >-->
+        <!--<ion-icon name="search"></ion-icon>-->
+        <!--</button>-->
+        <!--</form>-->
 
-            <h1 aria-label="Search" align="center" style="color: darkgray"> H O M E P A G E </h1>
+        <h1 style="text-align: center; color: darkgray"> H O M E P A G E </h1>
 
-            <nav class="nav">
-                <a class="nav-link active" href="#">HOME PAGE</a>
-                <div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>
-                <a class="nav-link" href="#">WISHLIST</a>
-                <div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>
-                <a class="nav-link" href="#">MY PLACE</a>
-            </nav>
+        <nav class="nav">
+            <a class="nav-link active" href="#">HOME PAGE</a>
+            <div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>
+            <a class="nav-link" href="#">WISHLIST</a>
+            <!--<div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>-->
+            <!--<a class="nav-link" href="#">MY PLACE</a>-->
+        </nav>
 
-            <img src="css/logo.jpg" class="rounded-circle">
-
-        </div>
-
-        <!--Search box for convert to lon and lat-->
-        <input id="address" type="textbox" value="Sydney, NSW">
-        <input id="submit" type="button" value="Geocode">
-
-
-
-        <div class="container-fluid">
-            <div class="row">
-
-
-                <!--side filter bar-->
-                <div class="col-sm-2">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <div class="form-check">
-                                <label>
-                                    <input type="checkbox" name="check"> <span class="label-text">Food</span>
-                                </label>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="form-check">
-                                <label>
-                                    <input type="checkbox" name="check"> <span class="label-text">Landscape</span>
-                                </label>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="form-check">
-                                <label>
-                                    <input type="checkbox" name="check"> <span class="label-text">Culture</span>
-                                </label>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="form-check">
-                                <label>
-                                    <input type="checkbox" name="check"> <span class="label-text">Entertainment</span>
-                               </label>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="form-check">
-                                <label>
-                                    <input type="checkbox" name="check"> <span class="label-text">Accommodation</span>
-                                </label>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="range-field w-100">
-                                <span class="label-text">Max Distance: </span>
-                                <input type="range" min="0" max="20" />
-                            </div>
-                        </li>
-                        <!--ToDo: display mode-->
-                        <!--<li class="list-group-item dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-                            <!--Display Style-->
-                            <!--<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
-                                <!--<a class="dropdown-item" href="#">tags</a>-->
-                                <!--<a class="dropdown-item" href="#">Pictures</a>-->
-                            <!--</div>-->
-                        <!--</li>-->
-                    </ul>
-                </div>
-
-
-                <!--main part-->
-                <div class="col-sm-8" >
-                    <div id="map" style="width: 80vw; height:80vh;"></div>
-                    <form>
-                        <div class="form-group input-group">
-                            <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-                        </div>
-                    </form>
-
-
-                    <!--recommendations-->
-                    <table>
-                        <tr>
-                            <td>
-                                <div class="card" style="width: 18rem;">
-                                    <img class="card-img-top" src="css/landview_1.jpg" alt="Card image cap">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Card title</h5>
-                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="card" style="width: 18rem;">
-                                    <img class="card-img-top" src="css/food.jpeg" alt="Card image cap">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Card title</h5>
-                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="card" style="width: 18rem;">
-                                    <img class="card-img-top" src="css/entertainment.jpg" alt="Card image cap">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Card title</h5>
-                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-
-
-
-                </div>
-            </div>
-        </div>
+        <img src="css/logo.jpg" class="rounded-circle">
 
     </div>
 
-    <!-- Optional JavaScript -->
-    <script type="text/javascript" src="js/myJavaScript.js"></script>
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuw4eThrp-qADrCQtA9hUAwXV9E-xlO74&libraries=places&callback=initAutocomplete"
-    async defer></script>
+
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <!--side filter bar-->
+            <div class="col-sm-2">
+
+                <!--Plan block-->
+                <div>
+
+                    <div>
+                        <p>{{ "Start from" }}</p>
+
+                        <!--search box for setting start location-->
+                        <div>
+                            <input id="address" type="textbox" value="Sydney, NSW">
+                            <input id="submit" type="button" value="Geocode">
+                        </div>
+                    </div>
+
+                    <div class="Stop1">
+                        <p>{{ "I want to go for" }}</p>
+                        <div class="dropdown">
+                            <button class="btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ stop1 }}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <button class="dropdown-item" @click="stop1 = 'Trending'">Trending</button>
+                                <button class="dropdown-item" @click="stop1 = 'Food'">Food</button>
+                            </div>
+                        </div>
+
+                        <div class="range-field w-100">
+                            <span class="label-text">Within Max Distance: </span>
+                            <input type="range" min="0" max="10"/>
+                            <span>km</span>
+                        </div>
+                    </div>
+
+
+                    <div class="Stop2">
+                        <p>{{ "Then go for" }}</p>
+                        <div class="dropdown">
+                            <button class="btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ stop2 }}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <button class="dropdown-item" @click="stop2 = 'Trending'">Trending</button>
+                                <button class="dropdown-item" @click="stop2 = 'Food'">Food</button>
+                            </div>
+                        </div>
+
+                        <div class="range-field w-100">
+                            <span class="label-text">Within Max Distance: </span>
+                            <input type="range" min="0" max="10"/>
+                            <span>km</span>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+
+            <!--main part-->
+            <div class="col-sm-8">
+                <div id="map" style="width: 80vw; height:80vh;"></div>
+                <form>
+                    <div class="form-group input-group">
+                        <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                    </div>
+                </form>
+
+
+                <!--recommendations-->
+                <table>
+                    <tr>
+                        <td>
+                            <div class="card" style="width: 18rem;">
+                                <img class="card-img-top" src="css/landview_1.jpg" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up
+                                        the bulk of the card's content.</p>
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="card" style="width: 18rem;">
+                                <img class="card-img-top" src="css/food.jpeg" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up
+                                        the bulk of the card's content.</p>
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="card" style="width: 18rem;">
+                                <img class="card-img-top" src="css/entertainment.jpg" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up
+                                        the bulk of the card's content.</p>
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Optional JavaScript -->
+<script type="text/javascript" src="js/myJavaScript.js"></script>
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuw4eThrp-qADrCQtA9hUAwXV9E-xlO74&libraries=places&callback=initAutocomplete"
+        async defer></script>
+
 </body>
 
 </html>
