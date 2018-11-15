@@ -15,6 +15,11 @@ h1 {
     width: 85%;
 }
 
+#navSearch {
+    width: 100%;
+    text-align: center;
+}
+
 #navPageLink {
     width: 85%;
 }
@@ -39,6 +44,6 @@ h1 {
 
 /*map API*/
 #map {
-    width: 90vw;
+    width: 92vw;
     height:78vh;
 }

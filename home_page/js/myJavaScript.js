@@ -38,6 +38,8 @@ var app = new Vue({
             "Stop#3": 30,
             "Stop#4": 30,
         },
+        startPlace: 'Current Location',
+        like: false,
     },
     methods: {
         searchPlace: function(event) {

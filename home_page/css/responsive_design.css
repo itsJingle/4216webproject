@@ -11,7 +11,6 @@ p {
     font-size: large;
     font-family: Arial;
     font-weight: bold;
-    color: darkslategrey;
 }
 
 #navLogo {
@@ -51,7 +50,7 @@ p {
 }
 
 .equalWBtn {
-    width: 60%;
+    width: 100%;
     text-align: right;
 }
 
@@ -137,4 +136,29 @@ html, body {
 ion-icon {
     font-size: 20px;
     alignment: center;
+}
+
+
+@media screen and (max-width: 1050px){
+    #navLogo {
+        width: 15%;
+    }
+
+    #navPageName {
+        width: 85%;
+    }
+
+    #navSearch {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    #navPageLink {
+        width: 85%;
+    }
+
+    #navLogin {
+        width: 15%;
+    }
 }
