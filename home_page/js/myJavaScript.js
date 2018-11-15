@@ -1,11 +1,13 @@
 const clientID='4ACEA4ZFEMXM2KWH3U54K0AMSKQRFGK4VQCEUDVPQVIF1QXZ';
 const clientSecret='1IBYDVIO1PCMHVCWRTEDKEHCQ0MKFI1NE45FFT0UIKOISCGU';
+const appKey='AIzaSyDuw4eThrp-qADrCQtA9hUAwXV9E-xlO74';
 var search = new Vue({
     el: '#app',
     data: {
      message: 'Hello Vue!',
      baseSearchUrl: 'https://api.foursquare.com/v2/venues/search?client_id='+clientID+'&client_secret='+clientSecret+'&v=20180323',
      baseRecUrl: 'https://api.foursquare.com/v2/venues/explore?client_id='+clientID+'&client_secret='+clientSecret+'&v=20180323',
+     googleMatrixBaseUrl:'https://maps.googleapis.com/maps/api/distancematrix/json?',
      latitude:114.170459318,
      longitude:22.3351853259, // CityU  Location
      near:'hongkong',
@@ -102,6 +104,39 @@ var search = new Vue({
        } else {
          console.log("fetch data error");
        }
+     },
+     computeRoute:function(origins, dests, travelMode){
+
+       var originArr=[];
+       var destArr=[];
+       origins.forEach(function(item, index){
+         originArr.push(item.name);
+       });
+
+       dests.forEach(function(item, index){
+         destArr.push(item.name);
+       });
+
+        var service = new google.maps.DistanceMatrixService();
+        service.getDistanceMatrix(
+          {
+            origins: originArr,
+            destinations: destArr,
+            travelMode: travelMode,
+            // transitOptions: TransitOptions,
+            // drivingOptions: DrivingOptions,
+            // unitSystem: UnitSystem,
+            // avoidHighways: Boolean,
+            // avoidTolls: Boolean,
+          }, callback);
+
+        function callback(response, status) {
+          // See Parsing the Results for
+          // the basics of a callback function.
+          console.log(response);
+          console.log(status);
+        }
+
      }
    },
    computed:{
@@ -121,8 +156,6 @@ var search = new Vue({
             myMark.addListener('mouseout', function() {
               infowindow.close();
             });
-
-
        });
      }
    }
