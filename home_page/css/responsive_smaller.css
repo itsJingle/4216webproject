@@ -1,0 +1,44 @@
+.rounded-circle{
+    width: 40px;
+    height: 40px;
+}
+
+h1 {
+    letter-spacing: 5px;
+}
+
+#navLogo {
+    width: 15%;
+}
+
+#navPageName {
+    width: 85%;
+}
+
+#navPageLink {
+    width: 85%;
+}
+
+#navLogin {
+    width: 15%;
+}
+
+#mainContent {
+    padding: 10px;
+}
+
+#planBlock {
+    width:100%;
+}
+
+#mapBlock {
+    padding-top: 10px;
+    width: 100%;
+}
+
+
+/*map API*/
+#map {
+    width: 90vw;
+    height:78vh;
+}
