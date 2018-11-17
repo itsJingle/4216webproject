@@ -16,7 +16,7 @@ var app = new Vue({
         markerLabels:['1','2','3','4'],
         latitude:22.3351853259,
         longitude:114.170459318, // CityU  Location
-        curLocation:[],
+        curLocation:{},
         near:'hongkong',
         limit:5,
         radius: 5000,
@@ -27,12 +27,12 @@ var app = new Vue({
         totalPoints:0,
         recommendLists:{},
         finalRecommendLists:{},
-        distanceMatrixs:{0:{},1:{},2:{},3:{},4:{}},
+        distanceMatrixs:new Array(4),
         nearResult:{},
         nearList:[],
         url:'',
         fetchCount:0,
-        bestRouteName:{0:'',1:'',2:'',3:''},
+        bestRouteName:[0,0,0,0,0],
         travelModes:['DRIVING','BICYCLING','TRANSIT','WALKING'],
         stops: ["Stop#1", "Stop#2", "Stop#3", "Stop#4"],
         category: ["Food", "Sight", "Coffee", "Drinks", "Arts", "Outdoors", "Shops","None"],
@@ -80,33 +80,39 @@ var app = new Vue({
           // console.log(section);
           this.searchRecommendation(section, n);
         },
-        searchPlace: function(event)
-        {
-          // console.log('searchPlace');
-            var url;
-            if(this.longitude == undefined || this.latitude == undefined) {
-                url = this.baseSearchUrl + '&ll=' + this.latitude + ',' + this.longitude + '&intent=browse'+'&limit=' + this.limit;
-            } else {
-                url = this.baseSearchUrl + '&near=' + this.near + '&limit=' + this.limit;
-            }
-            if(this.radius.length>0 &&this.radius.length<100000)
-            {
-                url += '&radius=' + this.radius;
-            }
-            fetch(url)
-                .then(response => response.json())
-                .then(myJson => this.nearResult = myJson)
-                .catch(function() {
-                    // Code for handling errors
-                    console.log("error");
-                });
-            this.url = url;
-        },
+        // searchPlace: function(event)
+        // {
+        //   // console.log('searchPlace');
+        //     var url;
+        //     if(this.longitude == undefined || this.latitude == undefined) {
+        //         url = this.baseSearchUrl + '&ll=' + this.latitude + ',' + this.longitude + '&intent=browse'+'&limit=' + this.limit;
+        //     } else {
+        //         url = this.baseSearchUrl + '&near=' + this.near + '&limit=' + this.limit;
+        //     }
+        //     if(this.radius.length>0 &&this.radius.length<100000)
+        //     {
+        //         url += '&radius=' + this.radius;
+        //     }
+        //     fetch(url)
+        //         .then(response => response.json())
+        //         .then(myJson => this.nearResult = myJson)
+        //         .catch(function() {
+        //             // Code for handling errors
+        //             console.log("error");
+        //         });
+        //     this.url = url;
+        // },
         searchRecommendation: function(section, whichStop)
         {
+          // clear previous route display
+          for(var i=0; i<4; i++)
+          {
+            directionsDisplay[i].setMap(null);
+          }
           // console.log('searchRecommendation');
           if(section == "None")
           {
+              // clear markers
               if(app.recommendLists[whichStop]!=undefined)
               {
                 for(var i=0; i<app.recommendLists[whichStop].length; i++)
@@ -140,19 +146,20 @@ var app = new Vue({
                   url = this.baseRecUrl + '&near=' + this.near + '&limit=' + this.limit;
               }
               // section
+
               url += '&section=' + section;
 
-              if(this.radius.length>0)
+              if(this.sliderValue["Stop#" + (whichStop+1)]>0)
               {
-                  url += '&radius=' + this.radius;
+                  url += '&radius=' + (this.sliderValue["Stop#" + (whichStop+1)]*1000);
               }
               fetch(url)
                   .then(response => response.json())
                   .then(myJson => {
                       //app.recommendResult = myJson;
-                      app.recommendLists[whichStop]=app.generateRecList(myJson);
+                      app.recommendLists[whichStop] = app.generateRecList(myJson);
                       app.recommendLists[whichStop].forEach(function(item, index){
-                        app.finalRecommendLists[whichStop][index] = {name:item.name,address:item.address};
+                        app.finalRecommendLists[whichStop][index] = {name:item.name,address:item.address,FSid:item.FSid};
                       });
                       app.totalPoints += app.limit;
                       app.drawRecMarkers(whichStop);
@@ -162,11 +169,6 @@ var app = new Vue({
                       // Code for handling errors
                       console.log("fetch function error: " + err);
                   });
-
-              this.url = url;
-
-
-
         },
         generateRecList:function(list) {
           // console.log('generateRecList');
@@ -175,13 +177,9 @@ var app = new Vue({
                 list.response.groups[0].items.forEach(function(item, index){
                     var tmp =
                         {
-                            id:item.venue.id,
+                            FSid:item.venue.id,
                             name:item.venue.name,
                             address:item.venue.location.address,
-                            geoCode:{
-                                lat:item.venue.location.lat,
-                                lng:item.venue.location.lng,
-                            },
                             marker:{}
                         };
                     if(item.venue.categories.length > 0){
@@ -195,27 +193,43 @@ var app = new Vue({
             console.log(ret);
             return ret;
         },
-        fetchRoute:function(origins, dests, travelMode, totalStops) //DRIVING,BICYCLING,TRANSIT,WALKING
+        fetchRoute:function(origins, dests, travelMode, thisStop, totalStops) //DRIVING,BICYCLING,TRANSIT,WALKING
         {
             var originArr=[];
             var destArr=[];
             origins.forEach(function(item, index){
-                if(item.name!=undefined){
+              if(item.name!=undefined)
+              {
+                if(item.address!=undefined)
+                {
+                  originArr.push(item.name + " " + item.address);
+                }  else {
                   originArr.push(item.name);
-                }else {
-                  console.log("can't find name for "+item);
                 }
-
-            });
-
-            dests.forEach(function(item, index){
-              if(item.address!=undefined){
-                destArr.push(item.address);
-              } else if(item.name!=undefined){
-                destArr.push(item.name);
+              } else if(item.address!=undefined)
+              {
+                originArr.push(item.address);
               }
               else {
                 console.log("can't find name for "+item);
+              }
+            });
+
+            dests.forEach(function(item, index){
+              if(item.name!=undefined)
+              {
+                if(item.address!=undefined)
+                {
+                  destArr.push(item.name + " " + item.address);
+                }  else {
+                  destArr.push(item.name);
+                }
+              } else if(item.address!=undefined)
+              {
+                destArr.push(item.address);
+              }
+              else {
+                  console.log("can't find name for "+item);
               }
             });
 
@@ -238,7 +252,7 @@ var app = new Vue({
                 // the basics of a callback function.
                 console.log(response);
                 console.log(status);
-                app.distanceMatrixs[app.fetchCount] = response;
+                app.distanceMatrixs[thisStop] = response;
                 app.fetchCount++;
                 if(app.fetchCount >= totalStops)
                 {
@@ -250,15 +264,23 @@ var app = new Vue({
         firstFetch:function(origin, dests, travelMode, totalStops){
             var destArr=[];
             dests.forEach(function(item, index){
-              if(item.address!=undefined)
+              if(item.name!=undefined)
+              {
+                if(item.address!=undefined)
+                {
+                  destArr.push(item.name + " " + item.address);
+                }
+                else
+                {
+                  destArr.push(item.name);
+                }
+              }
+              else if(item.address!=undefined)
               {
                 destArr.push(item.address);
-              } else if(item.name!=undefined)
-              {
-                destArr.push(item.name);
-              } else
-              {
-                console.log("can't find name for "+item);
+              }
+              else {
+                  console.log("can't find name for "+item);
               }
             });
             console.log(destArr);
@@ -282,71 +304,90 @@ var app = new Vue({
                 // the basics of a callback function.
                 console.log(response);
                 console.log(status);
-                app.distanceMatrixs[app.fetchCount] = response;
+                app.distanceMatrixs[0] = response;
                 app.fetchCount++;
                 if(app.fetchCount >= totalStops)
                 {
-                  app.computeRoute();
+                  app.computeRoute(totalStops);
                 }
             }
 
         },
         drawRecMarkers: function(whichStop){
           // console.log('drawRecMarkers');
-            app.recommendLists[whichStop].forEach(function(item, index) {
+            app.finalRecommendLists[whichStop].forEach(function(item, index) {
+              var googleGeo, myMark;
+              var address = "";
+              if(item.address != undefined) {
+                address += item.address;
+              }
+              if(item.name != undefined) {
+                address += " " + item.name;
+              }
 
-                var myMark = new google.maps.Marker({
-                    map: map,
-                    title: item.name,
-                    // icon:app.iconColors[0],
-                    label:app.markerLabels[whichStop],
-                    animation: google.maps.Animation.DROP,
-                    position: app.recommendLists[whichStop][index].geoCode,
-                    info:whichStop,
-                    index:index,
-                });
-                var infowindow = new google.maps.InfoWindow({
-                    content: item.name
-                });
-                myMark.addListener('click', function() {
-                    if(!app.customSelect[myMark.info]) // first time turn to customSelect
-                    {
-                      delete app.finalRecommendLists[myMark.info];
-                      app.finalRecommendLists[myMark.info] = {};
-                      app.totalPoints -= app.limit;
-                    }
-                    app.customSelect[myMark.info] = true;
+              geocoder.geocode({'address': address}, function(results, status) {
+                  if (status === 'OK') {
+                      googleGeo = results[0].geometry.location;
+                      myMark = new google.maps.Marker({
+                          map: map,
+                          title: item.name,
+                          // icon:app.iconColors[0],
+                          label:app.markerLabels[whichStop],
+                          animation: google.maps.Animation.DROP,
+                          position: googleGeo,
+                          info:whichStop,
+                          index:index,
+                          address:address
+                      });
+                      var infowindow = new google.maps.InfoWindow({
+                          content: item.name
+                      });
+                      myMark.addListener('click', function() {
+                          if(!app.customSelect[myMark.info]) // first time turn to customSelect
+                          {
+                            delete app.finalRecommendLists[myMark.info];
+                            app.finalRecommendLists[myMark.info] = new Array();
+                            app.totalPoints -= app.limit;
+                          }
+                          app.customSelect[myMark.info] = true;
 
 
 
-                    if(app.finalRecommendLists[myMark.info][myMark.index] == undefined)
-                    {
-                       app.finalRecommendLists[myMark.info][myMark.index]=myMark.title;
-                       myMark.setIcon(app.iconColors[2]);
-                       myMark.setLabel('');
-                       app.totalPoints += 1;
-                    } else
-                    {
-                       delete app.finalRecommendLists[myMark.info][myMark.index];
-                       app.totalPoints -= 1;
-                       myMark.setIcon();
-                       myMark.setLabel(''+(myMark.info+1));
-                    }
-                });
-                myMark.addListener('mouseover', function()
-                {
-                    infowindow.open(map, myMark);
-                });
-                myMark.addListener('mouseout', function()
-                {
-                    infowindow.close();
-                });
-                app.recommendLists[whichStop][index].marker = myMark;
+                          if(app.finalRecommendLists[myMark.info][myMark.index] == undefined)
+                          {
+                             app.finalRecommendLists[myMark.info][myMark.index]={name:myMark.title, address:myMark.address};
+                             myMark.setIcon(app.iconColors[2]);
+                             myMark.setLabel('');
+                             app.totalPoints += 1;
+                          } else
+                          {
+                             delete app.finalRecommendLists[myMark.info][myMark.index];
+                             app.totalPoints -= 1;
+                             myMark.setIcon();
+                             myMark.setLabel(''+(myMark.info+1));
+                          }
+                      });
+                      myMark.addListener('mouseover', function()
+                      {
+                          infowindow.open(map, myMark);
+                      });
+                      myMark.addListener('mouseout', function()
+                      {
+                          infowindow.close();
+                      });
+                      app.recommendLists[whichStop][index].marker = myMark;
+                  } else {
+                      alert('Geocode was not successful for the following reason: ' + status +"\naddress:"+item.address);
+                  }
+              });
+
             });
         },
         goClicked:function()
         {
           this.fetchCount = 0;
+          this.bestRouteName = [0,0,0,0,0];
+          this.distanceMatrixs = new Array(4);
           var stops = Object.keys(app.finalRecommendLists).length;
           console.log(stops)
           if(stops<4 && app.finalRecommendLists[stops] != undefined)
@@ -359,27 +400,35 @@ var app = new Vue({
           app.firstFetch(curLocation, app.finalRecommendLists[0], app.travelModes[0] ,stops);
           for (var i = 0; i < stops-1; i++)
           {
-            app.fetchRoute(app.finalRecommendLists[i], app.finalRecommendLists[i+1], app.travelModes[0] ,stops);
+            app.fetchRoute(app.finalRecommendLists[i], app.finalRecommendLists[i+1], app.travelModes[0] , i+1, stops);
           }
           this.enableLike = true;
 
         },
         reset:function()
         {
-          console.log('f');
-          // clear makers on the map
-          if(app.recommendLists[whichStop]!=undefined)
+          console.log('reset');
+          this.stops = ["Stop#1", "Stop#2", "Stop#3", "Stop#4"];
+          // clear previous route display
+          for(var i=0; i<4; i++)
           {
-            for(var i=0; i<app.recommendLists[whichStop].length; i++)
+            directionsDisplay[i].setMap(null);
+            if(app.recommendLists[i]!=undefined)
             {
-              if(Object.keys(app.recommendLists[whichStop][i].marker).length>0)
+              for(var j = 0; j <app.recommendLists[i].length; j++)
               {
-                app.recommendLists[whichStop][i].marker.setMap(null);
+                if(Object.keys(app.recommendLists[i][j].marker).length>0)
+                {
+                  app.recommendLists[i][j].marker.setMap(null);
+                }
               }
             }
           }
+          // clear makers on the map
+
           //
           app.recommendLists = {};
+          app.finalRecommendLists = {};
           this.like = false;
           this.enableLike = false;
         },
@@ -394,33 +443,101 @@ var app = new Vue({
         },
         computeRoute:function (totalStops)
         {
-          console.log('computeRoute called');
-          var minDist = 999999;
-          var dij = {};
-          var routePoints = {0:0,1:0,2:0,3:0,4:0};
-          for(var a = 0; a <= totalStops; a++)
+          console.log('computeRoute called: totalStops=' + totalStops);
+
+          var dist = new Array(5);
+          dist[0] = new Array(30);
+          // start point
+          for(var j = 0; j < 30; j++)
           {
-            var tmpDist = 0;
-              routePoints[a] = 0;// the first start place
-              var rows =  app.distanceMatrixs[a].rows.elements;
-              for (var b = 0; b < a.length; b++) // start
-              {
-                routePoints[1] = b;
-                for(var c=0; c < rows[b].length; c++) // dest
-                {}
-                var time =0;
-                routePoints[1] = b;
-                tmpDist += 1;
+              dist[0][j] = {
+                d:0,
+                parent:-1
               }
           }
+          // initialization
+          for(var i = 1; i<5; i++)
+          {
+            dist[i] = new Array(30);
+            for(var j = 0; j < 30; j++)
+            {
+                dist[i][j] = {
+                  d:99999999,
+                  parent:-1
+                }
+            }
+          }
+          // Dijkstra
+          for(var a = 0; a < totalStops; a++)
+          {
+            console.log('a='+a);
+            console.log(app.distanceMatrixs[a]);
+            var originNum = app.distanceMatrixs[a].originAddresses.length;
+            for(var b = 0; b < originNum; b++)
+            {
+                var neighborNum = app.distanceMatrixs[a].destinationAddresses.length;
+                for(var c = 0; c < neighborNum; c++)
+                {
+                    var status = app.distanceMatrixs[a].rows[b].elements[c].status;
+                    if(status == 'OK')
+                    {
+                        var durationVal = app.distanceMatrixs[a].rows[b].elements[c].duration.value;
+                        //console.log('duration='+durationVal);
+                        console.log(dist[a+1][c].d+'>'+durationVal+' + '+dist[a][b].d);
+                        if(dist[a+1][c].d > durationVal + dist[a][b].d)
+                        {
+                          dist[a+1][c].d = durationVal + dist[a][b].d;
+                          dist[a+1][c].parent = b;
+                        }
+                    } else
+                    {
+                        alert('some destination is not avaliable in Google Map. \nStop#'+a+': No.'+b+app.distanceMatrixs[a].destinationAddresses[b]);
+                        console.log('dist matrix error: '+ app.distanceMatrixs[a].destinationAddresses[b] + " a:" + a + ", b:" + b);
+                        return;
+                    }
+                }
+              }
+          }
+
+          // find min dist
+          var minDist = 99999999;
+          var minIndex = -1;
+          console.log("totalStops="+totalStops);
+          for(var i = 0; i < app.distanceMatrixs[totalStops-1].destinationAddresses.length; i++ )
+          {
+            if(dist[totalStops][i].d < minDist) {
+              minDist = dist[totalStops][i].d;
+              minIndex = i;
+            } else {
+              console.log(dist[totalStops][i].d);
+              console.log(dist);
+            }
+          }
+
+          console.log("min dest is "+minIndex);
+          console.log("****************************");
+          app.bestRouteName[0] = app.distanceMatrixs[0].originAddresses[0];
+          for(var i = totalStops; i > 0; i--)
+          {
+            console.log("backwards: min route is "+minIndex);
+            app.bestRouteName[i] = app.distanceMatrixs[i-1].destinationAddresses[minIndex];
+            minIndex = dist[i][minIndex].parent;
+          }
+          for(var i = totalStops; i < 4; i++){
+            app.bestRouteName.pop();
+          }
+
+          app.showBestRoute(app.bestRouteName, 'WALKING');
+
         },
         showBestRoute:function(list,travelMode)
         {
+          console.log(list);
           // clear previous route display
           for(var i=0; i<4; i++)
           {
             directionsDisplay[i].setMap(null);
-            directionsDisplay[i].setMap(map);
+
           }
           // Display bestRoute
           var count = 0;
@@ -428,8 +545,8 @@ var app = new Vue({
           {
             var request =
             {
-                origin: list[i].name,
-                destination: list[i+1].name,
+                origin: list[i],
+                destination: list[i+1],
 
                 // Note that Javascript allows us to access the constant
                 // using square brackets and a string value as its
@@ -445,14 +562,19 @@ var app = new Vue({
                   console.log(count);
                 } else {
                     directionsDisplay[count].setDirections(response);
+                    directionsDisplay[count].setMap(map);
                 }
                 count += 1;
               }
             });
           }
 
-        }
-    },
+        },
+        resetLimit: function(){
+
+        },
+
+    }, // methods ends here
     computed:{
 
     }

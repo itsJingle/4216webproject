@@ -1,5 +1,6 @@
 var map, directionsService;
 var  directionsDisplay=[];
+var geocoder, forDebug;
 function initAutocomplete() {
 
     map = new google.maps.Map(document.getElementById('map'), {
@@ -7,8 +8,11 @@ function initAutocomplete() {
         zoom: 14,
         mapTypeId: 'roadmap'
     });
+    const color=['#ff0000','#00ff00','#0000ff','#ffff00'];
     for(var i=0; i<4; i++) {
-      directionsDisplay.push(new google.maps.DirectionsRenderer({suppressMarkers: true}));
+      //directionsDisplay.push(new google.maps.DirectionsRenderer({suppressMarkers: true}));
+      directionsDisplay.push(new google.maps.DirectionsRenderer({polylineOptions:{strokeColor:color[i],strokeWeight:5-i}, suppressMarkers:true }));
+
     }
 
     directionsService = new google.maps.DirectionsService();
@@ -47,11 +51,14 @@ function initAutocomplete() {
             location: place.geometry.location
         });
         marker.setVisible(true);
-
+        forDebug = place.geometry.location.lat();
         infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
             'Place ID: ' + place.place_id + '<br>' +
-            place.formatted_address + '<br>' + place.international_phone_number + '<br><a href="' + place.website + '">website</a></div>'
-            + '<button>Set As Current</button>');
+            place.formatted_address + '<br>' + place.international_phone_number
+            + '<br><a href="' + place.website + '">website</a></div>'
+            + '<button onclick="setCurrentLocation(\'' + place.name +  '\', '
+            + place.geometry.location.lat()  + ',' + place.geometry.location.lng()
+             + ')">Set As Current Location</button>');
         infowindow.open(map, marker);
 
     });
@@ -73,7 +80,7 @@ function initAutocomplete() {
     }
 
 //For convertion from place to lon,lat.
-    var geocoder = new google.maps.Geocoder();
+    geocoder = new google.maps.Geocoder();
 
     // document.getElementById('submit').addEventListener('click', function() {
     //     geocodeAddress(geocoder, map);
@@ -94,5 +101,13 @@ function geocodeAddress(geocoder, resultsMap) {
             alert('Geocode was not successful for the following reason: ' + status);
         }
     });
+
+}
+
+function setCurrentLocation(placeName, lat, lng) {
+  document.getElementById('currentLocation').innerText = placeName;
+  app.latitude = lat;
+  app.longitude = lng;
+  console.log('lat:'+app.latitude +', lng:'+app.longitude);
 
 }

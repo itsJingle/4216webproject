@@ -7,23 +7,28 @@ h1 {
     letter-spacing: 5px;
 }
 
-#navLogo {
+.navLogo {
     width: 15%;
 }
 
-#navPageName {
+.navPageName {
     width: 85%;
 }
 
-#navPageLink {
+.navSearch {
+    width: 100%;
+    text-align: center;
+}
+
+.navPageLink {
     width: 85%;
 }
 
-#navLogin {
+.navLogin {
     width: 15%;
 }
 
-#mainContent {
+.mainContent {
     padding: 10px;
 }
 
@@ -39,6 +44,6 @@ h1 {
 
 /*map API*/
 #map {
-    width: 90vw;
+    width: 92vw;
     height:78vh;
 }
