@@ -53,7 +53,6 @@ function initAutocomplete() {
         marker.setVisible(true);
         forDebug = place.geometry.location.lat();
         infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
-            'Place ID: ' + place.place_id + '<br>' +
             place.formatted_address + '<br>' + place.international_phone_number
             + '<br><a href="' + place.website + '">website</a></div>'
             + '<button onclick="setCurrentLocation(\'' + place.name +  '\', '

@@ -35,9 +35,8 @@ var app = new Vue({
         bestRouteName:[0,0,0,0,0],
         travelModes:['DRIVING','BICYCLING','TRANSIT','WALKING'],
         stops: ["Stop#1", "Stop#2", "Stop#3", "Stop#4"],
-        category: ["Food", "Sight", "Coffee", "Drinks", "Arts", "Outdoors", "Shops","None"],
+        category: ["Food", "Sight", "Coffee", "Drinks", "Arts", "Outdoors", "Shops"],
         defaultValue: {
-            "None":0,
             "Food": 5,
             "Sight": 20,
             "Coffee": 5,
@@ -408,7 +407,7 @@ var app = new Vue({
         reset:function()
         {
           console.log('reset');
-          this.stops = ["Stop#1", "Stop#2", "Stop#3", "Stop#4"];
+          this.stops.splice(0, 4,"Stop#1", "Stop#2", "Stop#3", "Stop#4" );
           // clear previous route display
           for(var i=0; i<4; i++)
           {
