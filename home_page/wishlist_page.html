@@ -34,7 +34,7 @@
     <div class="navbar navbar-light bg-light ">
 
         <div class="navLogo">
-            <img style="margin-right: 20px" src="css/logo.jpg" class="rounded-circle">
+            <img class="logoPos" style="margin-right: 20px" src="css/logo.png">
         </div>
 
 
@@ -48,25 +48,27 @@
         <!--</form>-->
 
         <div class="navPageName">
-            <h1 style="text-align: center; font-family: Impact; color: darkorange"> WISHLIST</h1>
+            <h1 style="text-align: right; font-family: Impact; color: darkorange"> WISHLIST</h1>
         </div>
 
         <div class="navSearch">
-            <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+            <!--<input id="pac-input" class="controls" type="text" placeholder="Search Box">-->
         </div>
 
         <div class="navPageLink">
-            <nav class="nav" style="float: end">
+            <nav class="nav" style="float: left">
                 <a class="nav-link active" href="http://localhost:63342/4216project/home_page/responsive_design.html?_ijt=sjmp3l7afd1bkrd5dkqg9cmc0b" style="color: darkgray">HOME PAGE</a>
                 <div style="margin: 10px; width: 2px; height: 17px; background-color: red"></div>
                 <a class="nav-link" href="#" style="color: darkorange">WISHLIST</a>
+                <div style="margin: 10px; width: 2px; height: 17px; background-color: red"></div>
+                <a class="nav-link" style="color: darkgray">User Name</a>
                 <!--<div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>-->
                 <!--<a class="nav-link" href="#">MY PLACE</a>-->
             </nav>
         </div>
 
         <div class="navLogin" style="text-align: right">
-            <img src="css/logo.jpg" class="rounded-circle">
+            <ion-icon class="rounded-circle" name="log-out" style="color: lightsalmon"></ion-icon>
         </div>
 
     </div>
@@ -74,22 +76,50 @@
 
 
     <!--main content-->
-    <div class="mainContent" >
+    <div class="mainContent">
 
         <!--Todo: update user wishlist-->
         <!--wishlist block-->
-        <div style="padding: 5%;">
-            <ul class="list-group" v-for="each in wishlist">
-                <li class="list-group-item">
-                    <button type="button" class="btn btn-outline-warning">{{ each.Origin }}</button>
-                    <button type="button" class="btn btn-outline-warning">{{ each.Stop1 }}</button>
-                    <button type="button" class="btn btn-outline-warning">{{ each.Stop2 }}</button>
-                    <button type="button" class="btn btn-outline-warning">{{ each.Stop3 }}</button>
-                    <button type="button" class="btn btn-outline-warning">{{ each.Stop4 }}</button>
-                    <!--Todo: display the route on the map-->
-                    <button type="button" class="btn btn-outline-warning">Display on the Map</button>
-                </li>
-            </ul>
+        <div id="wishBlock">
+
+            <table class="table table-borderless">
+                <thead>
+                <tr style="color: darkslategrey">
+                    <th scope="col">#</th>
+                    <th scope="col">Origin</th>
+                    <th scope="col">Stop#1</th>
+                    <th scope="col">Stop#2</th>
+                    <th scope="col">Stop#3</th>
+                    <th scope="col">Stop#4</th>
+                    <th scope="col">Display on Map</th>
+                    <th scope="col">Remove</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="listContent" v-for="n in wishList.length">
+                    <th scope="row">{{ n }}</th>
+                    <td>{{ wishList[n-1].Origin }}</td>
+                    <td>{{ wishList[n-1].Stop1 }}</td>
+                    <td>{{ wishList[n-1].Stop2 }}</td>
+                    <td>{{ wishList[n-1].Stop3 }}</td>
+                    <td>{{ wishList[n-1].Stop4 }}</td>
+                    <td>
+                        <!--Todo: display on map-->
+                        <button type="button" class="btn btn-outline-warning">
+                            Display on Map
+                        </button>
+                    </td>
+                    <td>
+                        <!--Todo: remove-->
+                        <button type="button" class="btn btn-outline-danger">
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+
         </div>
 
         <!--map block-->
@@ -98,8 +128,6 @@
         </div>
 
     </div>
-
-
 
 
 
