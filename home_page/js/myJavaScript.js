@@ -86,7 +86,6 @@ var app = new Vue({
         searchRecommendation: function(section, whichStop)
         {
           // clear previous route display
-          console.log("section:" + section);
           for(var i=0; i<4; i++)
           {
             directionsDisplay[i].setMap(null);
@@ -95,7 +94,7 @@ var app = new Vue({
           if(section.includes('Stop'))
           {
               // clear markers
-              console.log('clear markers');
+
               if(app.recommendLists[whichStop]!=undefined)
               {
                 for(var i=0; i<app.recommendLists[whichStop].length; i++)
@@ -111,7 +110,7 @@ var app = new Vue({
           }
               app.customSelect[whichStop] = false;
               app.finalRecommendLists[whichStop] = [];
-              console.log('searchRecommendation called');
+
 
               // if same stop#, remove previous markers
               if(app.recommendLists[whichStop]!=undefined) {
@@ -173,7 +172,7 @@ var app = new Vue({
             } else {
                 console.log("fetch data error");
             }
-            console.log(ret);
+
             return ret;
         },
         fetchRoute:function(origins, dests, travelMode, thisStop, totalStops)
@@ -215,7 +214,7 @@ var app = new Vue({
                   console.log("can't find name for "+item);
               }
             });
-            console.log('destArr='+destArr);
+
             var service = new google.maps.DistanceMatrixService();
             service.getDistanceMatrix(
                 {
@@ -233,8 +232,8 @@ var app = new Vue({
             {
                 // See Parsing the Results for
                 // the basics of a callback function.
-                console.log(response);
-                console.log(status);
+                // console.log(response);
+                // console.log(status);
                 app.distanceMatrixs[thisStop] = response;
                 app.fetchCount++;
                 if(app.fetchCount >= totalStops)
@@ -266,10 +265,8 @@ var app = new Vue({
                   console.log("can't find name for "+item);
               }
             });
-            console.log("firstFetch-destArr:");
-            console.log(destArr);
             var service = new google.maps.DistanceMatrixService();
-            console.log(origin);
+
             service.getDistanceMatrix(
             {
                     origins: [origin],
@@ -286,8 +283,8 @@ var app = new Vue({
             {
                 // See Parsing the Results for
                 // the basics of a callback function.
-                console.log(response);
-                console.log(status);
+                //console.log(response);
+                //console.log(status);
                 app.distanceMatrixs[0] = response;
                 app.fetchCount++;
                 if(app.fetchCount >= totalStops)
@@ -410,7 +407,7 @@ var app = new Vue({
               fetch(detailUrl)
                 .then(res => res.json())
                 .then(myJson => {
-                  console.log(myJson);
+
                   if(myJson.meta.code == '200') {
                     var name =  myMark.title;
                     var address = myJson.response.venue.location.address==undefined?"not avaliable":myJson.response.venue.location.address;
@@ -578,7 +575,7 @@ var app = new Vue({
         },
         reset:function()
         {
-          console.log('reset');
+          // console.log('reset');
           this.limit = 5;
           this.customSelect = {
             0:false,
@@ -625,7 +622,7 @@ var app = new Vue({
         },
         computeRoute:function (totalStops)
         {
-          console.log('computeRoute called: totalStops=' + totalStops);
+          // console.log('computeRoute called: totalStops=' + totalStops);
 
           var dist = new Array(5);
           dist[0] = new Array(30);
@@ -695,7 +692,7 @@ var app = new Vue({
           app.bestRouteName[0] = app.distanceMatrixs[0].originAddresses[0];
           for(var i = totalStops; i > 0; i--)
           {
-            console.log("backwards: min route is "+minIndex);
+            //console.log("backwards: min route is "+minIndex);
             app.bestRouteAddress[i] = app.distanceMatrixs[i-1].destinationAddresses[minIndex];
             var tmp = Object.keys(app.finalRecommendLists[i-1])[minIndex];
             app.bestRouteName[i] = app.finalRecommendLists[i-1][tmp].name;
@@ -716,7 +713,7 @@ var app = new Vue({
         },
         showBestRoute:function(list,travelMode)
         {
-          console.log(list);
+          //console.log(list);
           // clear previous route display
           for(var i=0; i<4; i++)
           {
@@ -750,13 +747,11 @@ var app = new Vue({
                 count += 1;
               } else{
                 console.log("directionsService failed: "+status);
-                console.log("request: "+request);
-                console.log("response"+response);
-
+                console.log("request: ");
+                console.log(request);
+                console.log("response:");
+                console.log(response);
               }
-              console.log("directionsService failed: "+status);
-              console.log("request: "+request);
-              console.log("response"+response);
             });
 
           }
