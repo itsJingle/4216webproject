@@ -1,3 +1,8 @@
+.logoPos {
+    height: auto;
+    width: 100%;
+}
+
 .rounded-circle{
      width: 40px;
      height: 40px;
@@ -8,30 +13,31 @@ h1 {
 }
 
 .start {
-    height: auto;
+    font-size: 20px;
     font-family: Arial;
     font-weight: bold;
+    vertical-align: bottom;
 }
 
 .navLogo {
-    width: 5%;
+    width: 7%;
 }
 
 .navPageName {
-    width: 35%;
+    width: 30%;
 }
 
 .navSearch {
-    width: 30%;
+    width: 28%;
     text-align: center;
 }
 
 .navPageLink {
-    width: 25%;
+    width: 32%;
 }
 
 .navLogin {
-    width: 5%;
+    width: 3%;
 }
 
 .mainContent {
@@ -60,10 +66,20 @@ h1 {
     text-align: right;
 }
 
+#wishBlock {
+    margin: auto;
+    text-align: center;
+}
+
+.listContent td{
+    color: chocolate;
+}
+
 
 
 /*map API*/
 #map {
+    text-align: center;
     width: 78vw;
     height:78vh;
 }
@@ -145,7 +161,7 @@ ion-icon {
 }
 
 
-@media screen and (max-width: 1050px){
+@media screen and (max-width: 1250px){
     .navLogo {
         width: 15%;
     }
