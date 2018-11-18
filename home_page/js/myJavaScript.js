@@ -37,13 +37,13 @@ var app = new Vue({
         bestRouteName:[0,0,0,0,0],
         bestRouteAddress:[0,0,0,0,0],
         travelModes:['DRIVING','BICYCLING','TRANSIT','WALKING'],
+        travelMode:'WALKING',
         stops: ["Stop#1", "Stop#2", "Stop#3", "Stop#4"],
-        category: ["Food", "Sight", "Coffee", "Drinks", "Arts", "Outdoors", "Shops"],
+        category: ["Food", "Sight", "Coffee", "Arts", "Outdoors", "Shops"],
         defaultValue: {
             "Food": 5,
             "Sight": 20,
             "Coffee": 5,
-            "Drinks": 5,
             "Arts": 2,
             "Outdoors": 30,
             "Shops": 5,
@@ -172,7 +172,7 @@ var app = new Vue({
             console.log(ret);
             return ret;
         },
-        fetchRoute:function(origins, dests, travelMode, thisStop, totalStops) //DRIVING,BICYCLING,TRANSIT,WALKING
+        fetchRoute:function(origins, dests, travelMode, thisStop, totalStops)
         {
             var originArr=[];
             var destArr=[];
@@ -195,17 +195,17 @@ var app = new Vue({
             });
 
             dests.forEach(function(item, index){
-              if(item.name!=undefined)
+              if(item.address!=undefined)
               {
-                if(item.address!=undefined)
+                if(item.name!=undefined)
                 {
                   destArr.push(item.address + " " + item.name);
                 }  else {
-                  destArr.push(item.name);
+                  destArr.push(item.address);
                 }
-              } else if(item.address!=undefined)
+              } else if(item.name!=undefined)
               {
-                destArr.push(item.address);
+                destArr.push(item.name);
               }
               else {
                   console.log("can't find name for "+item);
@@ -558,10 +558,10 @@ var app = new Vue({
           }
 
           var curLocation = {lat: app.latitude, lng: app.longitude};
-          app.firstFetch(curLocation, app.finalRecommendLists[0], app.travelModes[0] ,stops);
+          app.firstFetch(curLocation, app.finalRecommendLists[0], app.travelMode, stops);
           for (var i = 0; i < stops-1; i++)
           {
-            app.fetchRoute(app.finalRecommendLists[i], app.finalRecommendLists[i+1], app.travelModes[0] , i+1, stops);
+            app.fetchRoute(app.finalRecommendLists[i], app.finalRecommendLists[i+1], app.travelMode, i+1, stops);
           }
           this.enableLike = true;
 
@@ -696,7 +696,7 @@ var app = new Vue({
             app.bestRouteAddress.pop();
           }
 
-          app.showBestRoute(app.bestRouteName, 'WALKING');
+          app.showBestRoute(app.bestRouteName, app.travelMode);
 
         },
         showBestRoute:function(list,travelMode)
@@ -775,19 +775,50 @@ var app = new Vue({
                   .then(myJson => {
                       //app.recommendResult = myJson;
                       var newItemCount = 0;
-                      app.generateRecList(myJson).forEach(function(item, index){
-                        var found = false;
-                        app.recommendLists[whichStop].forEach(function(itemRec, indexRec){
-                          if(!found && itemRec.name == [item.name]) {
-                            found = true;
+                      var list = app.generateRecList(myJson);
+                      // new limit is smaller:
+                      if(list.length<app.recommendLists[whichStop].lenght)
+                      {
+                        app.recommendLists[whichStop].forEach(function(item, index){
+                          var found = false;
+                          list.forEach(function(itemList, indexList){
+                            if(!found && itemList.name == [item.name]) {
+                              found = true;
+                            }
+                          });
+                          if(!found) {
+                            var inFinal = false;
+
+                            app.finalRecommendLists[whichStop].forEach(function(itemFinal, indexFinal){
+                              if(itemFinal.name==item.name){
+                                inFinal = true;
+                              }
+                            });
+                            if(!inFinal){
+                              app.recommendLists[whichStop].marker.setMap(null);
+                            }
+
                           }
                         });
-                        if(!found) {
-                          app.recommendLists[whichStop].push(item);
-                          newItemCount += 1;
-                        }
-                      });
-                      app.drawRecMarkers(whichStop, app.recommendLists[whichStop].length-newItemCount);
+                      }
+                      else
+                      {
+                        // new limit is larger:
+                        list.forEach(function(item, index){
+                          var found = false;
+                          app.recommendLists[whichStop].forEach(function(itemRec, indexRec){
+                            if(!found && itemRec.name == [item.name]) {
+                              found = true;
+                            }
+                          });
+                          if(!found) {
+                            app.recommendLists[whichStop].push(item);
+                            newItemCount += 1;
+                          }
+                        });
+                        app.drawRecMarkers(whichStop, app.recommendLists[whichStop].length-newItemCount);
+                      }
+
                   })
                   .catch(function(err) {
                       // Code for handling errors
