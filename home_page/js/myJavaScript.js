@@ -36,6 +36,7 @@ var app = new Vue({
         fetchCount:0,
         bestRouteName:[0,0,0,0,0],
         bestRouteAddress:[0,0,0,0,0],
+        bestRouteDetails:[0,0,0,0],
         travelModes:['DRIVING','BICYCLING','TRANSIT','WALKING'],
         travelMode:'WALKING',
         stops: ["Stop#1", "Stop#2", "Stop#3", "Stop#4"],
@@ -265,6 +266,7 @@ var app = new Vue({
                   console.log("can't find name for "+item);
               }
             });
+            console.log("firstFetch-destArr:");
             console.log(destArr);
             var service = new google.maps.DistanceMatrixService();
             console.log(origin);
@@ -292,6 +294,8 @@ var app = new Vue({
                 {
                   app.computeRoute(totalStops);
                 }
+
+
             }
 
         },
@@ -350,7 +354,8 @@ var app = new Vue({
                 else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT)
                 {
                   alert(status);
-                  setTimeout(app.drawSingleMarker(), 1000);
+                  setTimeout(app.drawSingleMarker(whichStop, index), 1000);
+
                 }
                 else
                 {
@@ -529,7 +534,8 @@ var app = new Vue({
                         else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT)
                         {
                           alert('Please wait, Google map:' + status);
-                          setTimeout(app.drawSingleMarker(), 1000);
+                          setTimeout(app.drawSingleMarker(whichStop, index), 1000);
+
                         }
                         else
                         {
@@ -551,6 +557,7 @@ var app = new Vue({
           this.fetchCount = 0;
           this.bestRouteName = [0,0,0,0,0];
           this.bestRouteAddress = [0,0,0,0,0];
+          this.bestRouteDetails = [0,0,0,0],
           this.distanceMatrixs = new Array(4);
           var stops = Object.keys(app.finalRecommendLists).length;
 
@@ -692,12 +699,16 @@ var app = new Vue({
             app.bestRouteAddress[i] = app.distanceMatrixs[i-1].destinationAddresses[minIndex];
             var tmp = Object.keys(app.finalRecommendLists[i-1])[minIndex];
             app.bestRouteName[i] = app.finalRecommendLists[i-1][tmp].name;
-
+            app.bestRouteDetails[i-1] = {
+              duration:app.distanceMatrixs[i-1].rows[dist[i][minIndex].parent].elements[minIndex].duration.text,
+              distance:app.distanceMatrixs[i-1].rows[dist[i][minIndex].parent].elements[minIndex].distance.text,
+            },
             minIndex = dist[i][minIndex].parent;
           }
           for(var i = totalStops; i < 4; i++){
             app.bestRouteName.pop();
             app.bestRouteAddress.pop();
+            app.bestRouteDetails.pop();
           }
 
           app.showBestRoute(app.bestRouteAddress, app.travelMode);
@@ -710,7 +721,6 @@ var app = new Vue({
           for(var i=0; i<4; i++)
           {
             directionsDisplay[i].setMap(null);
-
           }
           // Display bestRoute
           var count = 0;
@@ -739,10 +749,16 @@ var app = new Vue({
                 }
                 count += 1;
               } else{
-                console.log("directionsService failed"+status);
-                console.log(request);
+                console.log("directionsService failed: "+status);
+                console.log("request: "+request);
+                console.log("response"+response);
+
               }
+              console.log("directionsService failed: "+status);
+              console.log("request: "+request);
+              console.log("response"+response);
             });
+
           }
 
         },
@@ -834,6 +850,9 @@ var app = new Vue({
             }
 
           });
+        },
+        wishListDisplay:function(list) {
+
         },
 
     }, // methods ends here
