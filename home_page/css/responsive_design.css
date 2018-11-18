@@ -68,6 +68,7 @@ h1 {
 
 #wishBlock {
     margin: auto;
+    width: 100%;
     text-align: center;
 }
 
@@ -75,6 +76,9 @@ h1 {
     color: chocolate;
 }
 
+#smallTable {
+    display: none;
+}
 
 
 /*map API*/
@@ -152,9 +156,11 @@ html, body {
     font-weight: 500;
     padding: 6px 12px;
 }
+
 #target {
     width: 345px;
 }
+
 ion-icon {
     font-size: 20px;
     alignment: center;
@@ -183,4 +189,13 @@ ion-icon {
     .navLogin {
         width: 15%;
     }
+
+    #largeTable {
+        display: none;
+    }
+
+    #smallTable {
+        display: table;
+    }
+
 }
