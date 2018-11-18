@@ -700,7 +700,7 @@ var app = new Vue({
             app.bestRouteAddress.pop();
           }
 
-          app.showBestRoute(app.bestRouteName, app.travelMode);
+          app.showBestRoute(app.bestRouteAddress, app.travelMode);
 
         },
         showBestRoute:function(list,travelMode)
