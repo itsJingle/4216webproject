@@ -114,7 +114,7 @@
                             </div>
                         </div>
                         <input class="custom-range" type="range" min="0" max="30" step="1" v-model="limit" @change="resetLimit">
-                        {{ "show " + limit + " places" }}
+                        {{ "only show " + limit + " places" }}
                     </li>
                     <li class="list-group-item" v-for="n in 4">
                         <div class="dropdown">
@@ -123,7 +123,7 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <button class="dropdown-item" v-for="each in category" @click="stops.splice(n-1, 1, each); sliderValue['Stop#'+n] = defaultValue[stops[n-1]];getRecPlace(each,n-1);">{{ each }}</button>
-                                <button class="dropdown-item" @click="stops.splice(n-1, 1, 'Stop#' + n); sliderValue['Stop#'+n] = defaultValue['Stop#' + n]">{{ "Stop#" + n }}</button>
+                                <button class="dropdown-item" @click="stops.splice(n-1, 1, 'Stop#' + n); sliderValue['Stop#'+n] = defaultValue['Stop#' + n];getRecPlace('Stop',n-1);">{{ "Stop#" + n }}</button>
                             </div>
                         </div>
                         <div>
@@ -145,11 +145,37 @@
                 </div>
             </div>
 
+            <div>
+
+            </div>
+
         </div>
 
         <!--map block-->
         <div id="mapBlock">
             <div id="map"></div>
+
+            <!--details-->
+            <div class="details" v-show="enableLike">
+                <table>
+                    <thead>
+                    <tr style="color: orange">
+                        <th style="width: 80%" scope="col">#</th>
+                        <th style="width: 10%" scope="col">Duration</th>
+                        <th style="width: 10%" scope="col">Distance</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="n in (bestRouteName.length-1)">
+                        <th>{{ bestRouteName[n-1] + ' to ' + bestRouteName[n] }}</th>
+                        <td>{{ bestRouteDetails[n-1].duration }}</td>
+                        <td>{{ bestRouteDetails[n-1].distance }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
         </div>
 
     </div>
