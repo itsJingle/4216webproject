@@ -67,7 +67,7 @@ var app = new Vue({
         startPlace: 'Current Location',
         enableLike:false,
         like: false,
-        wishlist:[
+        wishList:[
             {Origin: "Origin", Stop1: "Stop#1", Stop2: "Stop#2", Stop3: "Stop#3", Stop4: "Stop#4"},
             {Origin: "Origin", Stop1: "Stop#1", Stop2: "Stop#2", Stop3: "Stop#3", Stop4: "Stop#4"},
             {Origin: "Origin", Stop1: "Stop#1", Stop2: "Stop#2", Stop3: "Stop#3", Stop4: "Stop#4"},
@@ -85,6 +85,7 @@ var app = new Vue({
         searchRecommendation: function(section, whichStop)
         {
           // clear previous route display
+          console.log("section:" + section);
           for(var i=0; i<4; i++)
           {
             directionsDisplay[i].setMap(null);
@@ -93,6 +94,7 @@ var app = new Vue({
           if(section.includes('Stop'))
           {
               // clear markers
+              console.log('clear markers');
               if(app.recommendLists[whichStop]!=undefined)
               {
                 for(var i=0; i<app.recommendLists[whichStop].length; i++)
@@ -139,7 +141,8 @@ var app = new Vue({
                       //app.recommendResult = myJson;
                       app.recommendLists[whichStop] = app.generateRecList(myJson);
                       app.recommendLists[whichStop].forEach(function(item, index){
-                        app.finalRecommendLists[whichStop][index] = {name:item.name,address:item.address,FSid:item.FSid};
+                        app.finalRecommendLists[whichStop][index] =
+                        {name:item.name,address:item.address,FSid:item.FSid};
                       });
                       app.totalPoints += app.limit;
                       app.drawRecMarkers(whichStop, 0);
@@ -181,7 +184,7 @@ var app = new Vue({
               {
                 if(item.address!=undefined)
                 {
-                  originArr.push(item.address + " " + item.name);
+                  originArr.push(item.name + " " + item.address);
                 }  else {
                   originArr.push(item.name);
                 }
@@ -195,11 +198,11 @@ var app = new Vue({
             });
 
             dests.forEach(function(item, index){
-              if(item.address!=undefined)
+              if(item.name!=undefined)
               {
                 if(item.name!=undefined)
                 {
-                  destArr.push(item.address + " " + item.name);
+                  destArr.push(item.name + " " + item.address);
                 }  else {
                   destArr.push(item.address);
                 }
@@ -433,7 +436,7 @@ var app = new Vue({
                     + myMark.title +'</h5><span style="color: darkslategrey">'
                     + address + '</span><br><span style="color: darkslategrey">Phone Number: '
                     + phoneNum +'</span><br><span style="color: darkslategrey">Link:'
-                    + '<a style="color: gold" href=" ">'
+                    + '<a href="'+website+' ">'
                         +  website + '</a ></span><br><span style="color: salmon">'
                     + tip + '</span></div></div></br>';
                     infowindow.setContent(content+
@@ -569,6 +572,7 @@ var app = new Vue({
         reset:function()
         {
           console.log('reset');
+          this.limit = 5;
           this.customSelect = {
             0:false,
             1:false,
@@ -658,7 +662,7 @@ var app = new Vue({
                         }
                     } else
                     {
-                        alert('some destination is not avaliable in Google Map. \nStop#'+a+': No.'+b+app.distanceMatrixs[a].destinationAddresses[b]);
+                        alert('some destination is not avaliable in Google Map. \nStop#'+(a+1)+': No.'+(b+1)+app.distanceMatrixs[a].destinationAddresses[b]);
                         console.log('dist matrix error: '+ app.distanceMatrixs[a].destinationAddresses[b] + " a:" + a + ", b:" + b);
                         return;
                     }
@@ -734,6 +738,9 @@ var app = new Vue({
                     directionsDisplay[count].setMap(map);
                 }
                 count += 1;
+              } else{
+                console.log("directionsService failed"+status);
+                console.log(request);
               }
             });
           }
@@ -777,7 +784,7 @@ var app = new Vue({
                       var newItemCount = 0;
                       var list = app.generateRecList(myJson);
                       // new limit is smaller:
-                      if(list.length<app.recommendLists[whichStop].lenght)
+                      if(list.length<app.recommendLists[whichStop].length)
                       {
                         app.recommendLists[whichStop].forEach(function(item, index){
                           var found = false;
@@ -795,7 +802,7 @@ var app = new Vue({
                               }
                             });
                             if(!inFinal){
-                              app.recommendLists[whichStop].marker.setMap(null);
+                              app.recommendLists[whichStop][index].marker.setMap(null);
                             }
 
                           }
