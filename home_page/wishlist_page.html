@@ -82,7 +82,7 @@
         <!--wishlist block-->
         <div id="wishBlock">
 
-            <table class="table table-borderless">
+            <table id="largeTable" class="table table-borderless">
                 <thead>
                 <tr style="color: darkslategrey">
                     <th scope="col">#</th>
@@ -119,6 +119,37 @@
                 </tbody>
             </table>
 
+            <table id="smallTable" class="table">
+                <tbody v-for="n in wishList.length">
+                <tr v-for="index in 5">
+                    <th>{{ Object.keys(wishList[n-1])[index-1] }}</th>
+                    <td>{{ Object.values(wishList[n-1])[index-1] }}</td>
+                </tr>
+                <tr>
+                    <!--Todo: display on map-->
+                    <td>
+                        <button type="button" class="btn btn-outline-warning">
+                            Display on Map
+                        </button>
+                    </td>
+                    <td>
+                        <!--Todo: remove-->
+                        <button type="button" class="btn btn-outline-danger">
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="dropdown">
+                <button class="equalWBtn btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ travelMode }}
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <button class="dropdown-item" v-for="each in travelModes" @click="travelMode = each">{{ each }}</button>
+                </div>
+            </div>
 
         </div>
 
