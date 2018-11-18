@@ -32,6 +32,7 @@ var app = new Vue({
         nearResult:{},
         nearList:[],
         url:'',
+        picSize:'286x180',
         fetchCount:0,
         bestRouteName:[0,0,0,0,0],
         bestRouteAddress:[0,0,0,0,0],
@@ -180,7 +181,7 @@ var app = new Vue({
               {
                 if(item.address!=undefined)
                 {
-                  originArr.push(item.name + " " + item.address);
+                  originArr.push(item.address + " " + item.name);
                 }  else {
                   originArr.push(item.name);
                 }
@@ -198,7 +199,7 @@ var app = new Vue({
               {
                 if(item.address!=undefined)
                 {
-                  destArr.push(item.name + " " + item.address);
+                  destArr.push(item.address + " " + item.name);
                 }  else {
                   destArr.push(item.name);
                 }
@@ -210,7 +211,7 @@ var app = new Vue({
                   console.log("can't find name for "+item);
               }
             });
-
+            console.log('destArr='+destArr);
             var service = new google.maps.DistanceMatrixService();
             service.getDistanceMatrix(
                 {
@@ -246,7 +247,7 @@ var app = new Vue({
               {
                 if(item.address!=undefined)
                 {
-                  destArr.push(item.name + " " + item.address);
+                  destArr.push(item.address + " " + item.name);
                 }
                 else
                 {
@@ -386,11 +387,6 @@ var app = new Vue({
           var infowindow = app.recommendLists[whichStop][index].infowindow;
           var selectBtnText = isSelect? 'unselect':'select';
           var moreInfoBtnText=isMoreInfo? 'less info':'more info';
-
-          infowindow.setContent('<strong>'+myMark.title+'</strong></br>' +
-          '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
-          selectBtnText + '</button><button onclick="app.moreInfoClicked('
-          + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
         },
         moreInfoClicked: function(whichStop, index, isSelect, isMoreInfo) {
             isMoreInfo = !isMoreInfo;
@@ -400,48 +396,72 @@ var app = new Vue({
 
             var infowindow = app.recommendLists[whichStop][index].infowindow;
             var fsid = app.recommendLists[whichStop][index].FSid;
-            var detailUrl= 'https://api.foursquare.com/v2/venues/' + fsid + '?client_id='+clientID+'&client_secret='+clientSecret+'&v=20180323';
-            fetch(detailUrl)
-              .then(res => res.json)
-              .then(myJson => {
-                if(myJson.meta.code != '200') {
-                  var name =  myMark.title;
-                  var address = myJson.response.venue.location.address==undefined?"not avaliable":myJson.response.venue.location.address;
-                  var phoneNum = "not avaliable";
-                  var website = myJson.response.venue.url==undefined?"not avaliable":myJson.response.venue.url;
-                  var fsWebsite = myJson.response.venue.canonicalUrl==undefined?"not avaliable":myJson.response.venue.canonicalUrl;
-                  var likeNum = myJson.response.venue.likes.count==undefined?"0":myJson.response.venue.likes.count;
-                  var rating = myJson.response.venue.rating==undefined?"N/A":myJson.response.venue.rating;
-                  var photo = "";
-                  var tip = myJson.response.venue.tips.groups[0].items[0].text==undefined?"not avaliable":myJson.response.venue.tips.groups[0].items[0].text;
-                  var jsonContact = myJson.response.venue.contact;
-                  if(Object.keys(jsonContact).length > 0) {
-                    phoneNum = myJson.response.venue.contact.phone==undefined?"not avaliable":myJson.response.venue.contact.phone;
+            if(isMoreInfo)
+            {
+              var detailUrl= 'https://api.foursquare.com/v2/venues/' + fsid + '?client_id='+clientID+'&client_secret='+clientSecret+'&v=20180323';
+              fetch(detailUrl)
+                .then(res => res.json())
+                .then(myJson => {
+                  console.log(myJson);
+                  if(myJson.meta.code == '200') {
+                    var name =  myMark.title;
+                    var address = myJson.response.venue.location.address==undefined?"not avaliable":myJson.response.venue.location.address;
+                    var phoneNum = "not avaliable";
+                    var website = myJson.response.venue.url==undefined?"not avaliable":myJson.response.venue.url;
+                    var fsWebsite = myJson.response.venue.canonicalUrl==undefined?"not avaliable":myJson.response.venue.canonicalUrl;
+                    var likeNum = myJson.response.venue.likes.count==undefined?"0":myJson.response.venue.likes.count;
+                    var rating = myJson.response.venue.rating==undefined?"N/A":myJson.response.venue.rating;
+                    var photo = "";
+                    var tip = "No tip";
+                    try {
+                      tip = myJson.response.venue.tips.groups[0].items[0].text==undefined?"not avaliable":myJson.response.venue.tips.groups[0].items[0].text;
+                    } catch (e) {
+
+                    }
+
+                    var jsonContact = myJson.response.venue.contact;
+                    if(Object.keys(jsonContact).length > 0) {
+                      phoneNum = myJson.response.venue.contact.phone==undefined?"not avaliable":myJson.response.venue.contact.phone;
+                    }
+
+                    if(myJson.response.venue.photos.groups[1].items[0].prefix!=undefined && myJson.response.venue.photos.groups[1].items[0].suffix!=undefined)
+                    {
+                      photo = myJson.response.venue.photos.groups[1].items[0].prefix + app.picSize + myJson.response.venue.photos.groups[1].items[0].suffix;
+                    }
+                    var content = '<div style="width: 38rem"><div style="width: 50%; float: left"><img src="'
+                    + photo + '"></div><div style="width: 50%; float: right"><br><h5>'
+                    + myMark.title +'</h5><span style="color: darkslategrey">'
+                    + address + '</span><br><span style="color: darkslategrey">Phone Number: '
+                    + phoneNum +'</span><br><span style="color: darkslategrey">Link:'
+                    + '<a style="color: gold" href=" ">'
+                        +  website + '</a ></span><br><span style="color: salmon">'
+                    + tip + '</span></div></div></br>';
+                    infowindow.setContent(content+
+                    '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
+                    selectBtnText + '</button><button onclick="app.moreInfoClicked('
+                    + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
+                  } else {
+                    infowindow.setContent('<strong>' + name + '</strong></br><p>no more infomation of this place</p></br>' +
+                    '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
+                    selectBtnText + '</button><button onclick="app.moreInfoClicked('
+                    + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
                   }
+                })
+                .catch(function(err) {
+                    // Code for handling errors
+                    infowindow.setContent('<strong>' + myMark.title + '</strong></br><p>no more infomation of this place</p></br>' +
+                    '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
+                    selectBtnText + '</button><button onclick="app.moreInfoClicked('
+                    + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
+                    console.log("fetch function error: " + err);
+                });
+                infowindow.setContent('<strong>'+myMark.title+'</strong></br><p>Loading</p></br>' +
+                '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
+                selectBtnText + '</button><button onclick="app.moreInfoClicked('
+                + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
+            }
 
-                  if(myJson.response.venue.photos.groups[1].items[0].prefix!=undefined && myJson.response.venue.photos.groups[1].items[0].suffix!=undefined)
-                  {
-                    photo = myJson.response.venue.photos.groups[1].items[0].prefix + app.picSize + myJson.response.venue.photos.groups[1].items[0].suffix;
-                  }
-
-
-                  infowindow.setContent('<strong>' + myMark.title + '</strong></br><p>no more infomation of this place</p></br>' +
-                  '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
-                  selectBtnText + '</button><button onclick="app.moreInfoClicked('
-                  + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
-                } else {
-                  infowindow.setContent('<strong>' + myMark.title + '</strong></br><p>no more infomation of this place</p></br>' +
-                  '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
-                  selectBtnText + '</button><button onclick="app.moreInfoClicked('
-                  + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
-                }
-              })
-              .catch(function(err) {
-                  // Code for handling errors
-                  console.log("fetch function error: " + err);
-              });
-
-            infowindow.setContent('<strong>'+myMark.title+'</strong></br><p>Loading</p></br>' +
+            infowindow.setContent('<strong>'+myMark.title+'</strong></br>' +
             '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
             selectBtnText + '</button><button onclick="app.moreInfoClicked('
             + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
@@ -621,8 +641,6 @@ var app = new Vue({
           // Dijkstra
           for(var a = 0; a < totalStops; a++)
           {
-            console.log('a='+a);
-            console.log(app.distanceMatrixs[a]);
             var originNum = app.distanceMatrixs[a].originAddresses.length;
             for(var b = 0; b < originNum; b++)
             {
@@ -633,8 +651,6 @@ var app = new Vue({
                     if(status == 'OK')
                     {
                         var durationVal = app.distanceMatrixs[a].rows[b].elements[c].duration.value;
-                        //console.log('duration='+durationVal);
-                        console.log(dist[a+1][c].d+'>'+durationVal+' + '+dist[a][b].d);
                         if(dist[a+1][c].d > durationVal + dist[a][b].d)
                         {
                           dist[a+1][c].d = durationVal + dist[a][b].d;
@@ -653,7 +669,6 @@ var app = new Vue({
           // find min dist
           var minDist = 99999999;
           var minIndex = -1;
-          console.log("totalStops="+totalStops);
           for(var i = 0; i < app.distanceMatrixs[totalStops-1].destinationAddresses.length; i++ )
           {
             if(dist[totalStops][i].d < minDist) {
@@ -665,10 +680,8 @@ var app = new Vue({
             }
           }
 
-          console.log("min dest is "+minIndex);
-          console.log("****************************");
           app.bestRouteAddress[0] = app.distanceMatrixs[0].originAddresses[0];
-          app.bestRouteName[0] = {lat: app.latitude, lng: app.longitude};
+          app.bestRouteName[0] = app.distanceMatrixs[0].originAddresses[0];
           for(var i = totalStops; i > 0; i--)
           {
             console.log("backwards: min route is "+minIndex);
