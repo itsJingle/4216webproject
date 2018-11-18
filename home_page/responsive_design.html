@@ -34,7 +34,7 @@
     <div class="navbar navbar-light bg-light ">
 
         <div class="navLogo">
-            <img style="margin-right: 20px" src="css/logo.jpg" class="rounded-circle">
+            <img class="logoPos" style="margin-right: 20px" src="css/logo.png">
         </div>
 
 
@@ -48,7 +48,7 @@
         <!--</form>-->
 
         <div class="navPageName">
-            <h1 style="text-align: center; font-family: Impact; color: darkorange"> HOME PAGE</h1>
+            <h1 style="text-align: right; font-family: Impact; color: darkorange"> HOME PAGE</h1>
         </div>
 
         <div class="navSearch">
@@ -56,17 +56,19 @@
         </div>
 
         <div class="navPageLink">
-            <nav class="nav" style="float: end">
-                <a class="nav-link active" href=" " style="color: darkorange">HOME PAGE</a >
+            <nav class="nav" style="float: left">
+                <a class="nav-link active" href="#" style="color: darkorange">HOME PAGE</a>
                 <div style="margin: 10px; width: 2px; height: 17px; background-color: red"></div>
-                <a class="nav-link" href="http://localhost:63342/4216project/home_page/wishlist_page.html?_ijt=sjmp3l7afd1bkrd5dkqg9cmc0b" style="color: darkgray">WISHLIST</a >
+                <a class="nav-link" href="http://localhost:63342/4216project/home_page/wishlist_page.html?_ijt=sjmp3l7afd1bkrd5dkqg9cmc0b" style="color: darkgray">WISHLIST</a>
+                <div style="margin: 10px; width: 2px; height: 17px; background-color: red"></div>
+                <a class="nav-link" style="color: darkgray">User Name</a>
                 <!--<div style="margin: 10px; width: 2px; height: 15px; background-color: red"></div>-->
-                <!--<a class="nav-link" href="#">MY PLACE</a >-->
+                <!--<a class="nav-link" href="#">MY PLACE</a>-->
             </nav>
         </div>
 
         <div class="navLogin" style="text-align: right">
-            <img src="css/logo.jpg" class="rounded-circle">
+            <ion-icon class="rounded-circle" name="log-out" style="color: lightsalmon"></ion-icon>
         </div>
 
     </div>
@@ -77,18 +79,17 @@
     <div class="mainContent" >
 
         <!--start place-->
-        <div id="topBlock">
-            <!--Todo: add to wishlist-->
-            <button style="float: right" type="button" class="btn btn-warning btn-sm" @click="like = !like">
-                <ion-icon v-if="!like" name="heart" style="color: white"></ion-icon>
-                <ion-icon v-if="like" name="heart" style="color: red"></ion-icon>
-            </button>
-
-            <!--Todo: update the start place after setting the origin, default is current location-->
-            <div style="float: bottom">
-                <span class="start" style="color: darkslategrey; vertical-align: bottom">Start from</span>
-                <span class="start" id="currentLocation" style="color: darkorange">{{ startPlace }}</span>
+        <div id="topBlock" style="vertical-align: bottom">
+            <div style="vertical-align: bottom; height: 100%">
+                <span style="color: darkslategrey" class="start">Start from</span>
+                <span style="color: darkorange" class="start" id="currentLocation">{{ startPlace }}</span>
+                <!--Todo: add to wishlist-->
+                <button style="vertical-align: bottom; float: right" type="button" class="btn btn-warning btn-sm" @click="like = !like">
+                    <ion-icon v-if="!like" name="heart" style="color: white"></ion-icon>
+                    <ion-icon v-if="like" name="heart" style="color: red"></ion-icon>
+                </button>
             </div>
+
 
                 <!--search box for setting start location-->
                 <!--<div>-->
@@ -104,7 +105,15 @@
             <div>
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <input class="custom-range" type="range" min="0" max="10" step="1" v-model="limit" @change="resetLimit">
+                        <div class="dropdown">
+                            <button class="equalWBtn btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ travelMode }}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <button class="dropdown-item" v-for="each in travelModes" @click="travelMode = each">{{ each }}</button>
+                            </div>
+                        </div>
+                        <input class="custom-range" type="range" min="0" max="30" step="1" v-model="limit" @change="resetLimit">
                         {{ "only show " + limit + " places" }}
                     </li>
                     <li class="list-group-item" v-for="n in 4">
@@ -137,8 +146,6 @@
             </div>
 
         </div>
-
-
 
         <!--map block-->
         <div id="mapBlock">
