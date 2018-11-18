@@ -104,7 +104,7 @@
             <div>
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <input class="custom-range" type="range" min="0" max="30" step="1" v-model="limit" @change="resetLimit">
+                        <input class="custom-range" type="range" min="0" max="10" step="1" v-model="limit" @change="resetLimit">
                         {{ "only show " + limit + " places" }}
                     </li>
                     <li class="list-group-item" v-for="n in 4">

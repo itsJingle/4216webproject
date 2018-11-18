@@ -16,9 +16,10 @@ var app = new Vue({
         markerLabels:['1','2','3','4'],
         latitude:22.3351853259,
         longitude:114.170459318, // CityU  Location
-        curLocation:{},
+        curLocation:"Current Location",
         near:'hongkong',
         limit:5,
+        oldLimit:5,
         radius: 5000,
         section:'',
         recommendResult:{},
@@ -33,6 +34,7 @@ var app = new Vue({
         url:'',
         fetchCount:0,
         bestRouteName:[0,0,0,0,0],
+        bestRouteAddress:[0,0,0,0,0],
         travelModes:['DRIVING','BICYCLING','TRANSIT','WALKING'],
         stops: ["Stop#1", "Stop#2", "Stop#3", "Stop#4"],
         category: ["Food", "Sight", "Coffee", "Drinks", "Arts", "Outdoors", "Shops"],
@@ -77,30 +79,8 @@ var app = new Vue({
         {
           // console.log('getRecPlace');
           // console.log(section);
-          this.searchRecommendation(section, n);
+          app.searchRecommendation(section, n);
         },
-        // searchPlace: function(event)
-        // {
-        //   // console.log('searchPlace');
-        //     var url;
-        //     if(this.longitude == undefined || this.latitude == undefined) {
-        //         url = this.baseSearchUrl + '&ll=' + this.latitude + ',' + this.longitude + '&intent=browse'+'&limit=' + this.limit;
-        //     } else {
-        //         url = this.baseSearchUrl + '&near=' + this.near + '&limit=' + this.limit;
-        //     }
-        //     if(this.radius.length>0 &&this.radius.length<100000)
-        //     {
-        //         url += '&radius=' + this.radius;
-        //     }
-        //     fetch(url)
-        //         .then(response => response.json())
-        //         .then(myJson => this.nearResult = myJson)
-        //         .catch(function() {
-        //             // Code for handling errors
-        //             console.log("error");
-        //         });
-        //     this.url = url;
-        // },
         searchRecommendation: function(section, whichStop)
         {
           // clear previous route display
@@ -109,7 +89,7 @@ var app = new Vue({
             directionsDisplay[i].setMap(null);
           }
           // console.log('searchRecommendation');
-          if(section == "None")
+          if(section.includes('Stop'))
           {
               // clear markers
               if(app.recommendLists[whichStop]!=undefined)
@@ -122,7 +102,7 @@ var app = new Vue({
                   }
                 }
               }
-              this.recommendLists[whichStop] = {};
+              app.recommendLists[whichStop] = {};
               return;
           }
               app.customSelect[whichStop] = false;
@@ -139,18 +119,18 @@ var app = new Vue({
               }
 
               var url;
-              if(this.longitude != undefined && this.latitude != undefined) {
-                  url = this.baseRecUrl + '&ll=' + this.latitude + ',' + this.longitude + '&limit=' + this.limit;
+              if(app.longitude != undefined && app.latitude != undefined) {
+                  url = app.baseRecUrl + '&ll=' + app.latitude + ',' + app.longitude + '&limit=' + app.limit;
               } else {
-                  url = this.baseRecUrl + '&near=' + this.near + '&limit=' + this.limit;
+                  url = app.baseRecUrl + '&near=' + app.near + '&limit=' + app.limit;
               }
               // section
 
               url += '&section=' + section;
 
-              if(this.sliderValue["Stop#" + (whichStop+1)]>0)
+              if(app.sliderValue["Stop#" + (whichStop+1)]>0)
               {
-                  url += '&radius=' + (this.sliderValue["Stop#" + (whichStop+1)]*1000);
+                  url += '&radius=' + (app.sliderValue["Stop#" + (whichStop+1)]*1000);
               }
               fetch(url)
                   .then(response => response.json())
@@ -161,8 +141,7 @@ var app = new Vue({
                         app.finalRecommendLists[whichStop][index] = {name:item.name,address:item.address,FSid:item.FSid};
                       });
                       app.totalPoints += app.limit;
-                      app.drawRecMarkers(whichStop);
-                      console.log(app.finalRecommendLists);
+                      app.drawRecMarkers(whichStop, 0);
                   })
                   .catch(function(err) {
                       // Code for handling errors
@@ -312,73 +291,235 @@ var app = new Vue({
             }
 
         },
-        drawRecMarkers: function(whichStop){
-          // console.log('drawRecMarkers');
-            app.finalRecommendLists[whichStop].forEach(function(item, index) {
-              var googleGeo, myMark;
-              var address = "";
-              if(item.address != undefined) {
-                address += item.address;
-              }
-              if(item.name != undefined) {
-                address += " " + item.name;
-              }
+        drawSingleMarker: function(whichStop, index)
+        {
+          item = app.recommendLists[whichStop][index];
+          var googleGeo, myMark;
+          var address = "";
+          if(item.address != undefined) {
+            address += item.address;
+          }
+          if(item.name != undefined) {
+            address += " " + item.name;
+          }
 
-              geocoder.geocode({'address': address}, function(results, status) {
-                  if (status === 'OK') {
-                      googleGeo = results[0].geometry.location;
-                      myMark = new google.maps.Marker({
-                          map: map,
-                          title: item.name,
-                          // icon:app.iconColors[0],
-                          label:app.markerLabels[whichStop],
-                          animation: google.maps.Animation.DROP,
-                          position: googleGeo,
-                          info:whichStop,
-                          index:index,
-                          address:address
-                      });
-                      var infowindow = new google.maps.InfoWindow({
-                          content: item.name
-                      });
-                      myMark.addListener('click', function() {
-                          if(!app.customSelect[myMark.info]) // first time turn to customSelect
-                          {
-                            delete app.finalRecommendLists[myMark.info];
-                            app.finalRecommendLists[myMark.info] = new Array();
-                            app.totalPoints -= app.limit;
-                          }
-                          app.customSelect[myMark.info] = true;
+          geocoder.geocode({'address': address}, function(results, status)
+          {
+              if (status === 'OK') {
+                  googleGeo = results[0].geometry.location;
+                  myMark = new google.maps.Marker({
+                      map: map,
+                      title: item.name,
+                      // icon:app.iconColors[0],
+                      label:app.markerLabels[whichStop],
+                      animation: google.maps.Animation.DROP,
+                      position: googleGeo,
+                      info:whichStop,
+                      index:index,
+                      address:address
+                  });
+                  var onlyNameInfoWin = new google.maps.InfoWindow({
+                      content: item.name
+                  });
+                  var isSelect = false;
+                  var infowindow = new google.maps.InfoWindow({
+                      content: '<strong>'+item.name+'</strong></br>'+
+                      '<button onclick="app.selectClicked('+ whichStop + ',' + index + ', false, false' + ')">select</button>' +
+                      '<button onclick="app.moreInfoClicked(' + whichStop + ',' + index + ', false, false' + ')">more info</button>'
+                  });
 
-
-
-                          if(app.finalRecommendLists[myMark.info][myMark.index] == undefined)
-                          {
-                             app.finalRecommendLists[myMark.info][myMark.index]={name:myMark.title, address:myMark.address};
-                             myMark.setIcon(app.iconColors[2]);
-                             myMark.setLabel('');
-                             app.totalPoints += 1;
-                          } else
-                          {
-                             delete app.finalRecommendLists[myMark.info][myMark.index];
-                             app.totalPoints -= 1;
-                             myMark.setIcon();
-                             myMark.setLabel(''+(myMark.info+1));
-                          }
-                      });
-                      myMark.addListener('mouseover', function()
-                      {
-                          infowindow.open(map, myMark);
-                      });
-                      myMark.addListener('mouseout', function()
-                      {
-                          infowindow.close();
-                      });
-                      app.recommendLists[whichStop][index].marker = myMark;
-                  } else {
-                      alert('Geocode was not successful for the following reason: ' + status +"\naddress:"+item.address);
+                  myMark.addListener('click', function() {
+                    onlyNameInfoWin.close();
+                    infowindow.open(map, myMark);
+                  });
+                  myMark.addListener('mouseover', function()
+                  {
+                      onlyNameInfoWin.open(map, myMark);
+                  });
+                  myMark.addListener('mouseout', function()
+                  {
+                      onlyNameInfoWin.close();
+                  });
+                  app.recommendLists[whichStop][index].marker = myMark;
+                  app.recommendLists[whichStop][index].infowindow = infowindow;
+                }
+                else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT)
+                {
+                  alert(status);
+                  setTimeout(app.drawSingleMarker(), 1000);
+                }
+                else
+                {
+                  alert('Geocode was not successful for the following reason: ' + status
+                  + "\nname:" + item.name + "\naddress:" + item.address);
+                  app.recommendLists[whichStop].splice(index, 1);
+                  if(!app.customSelect[whichStop]){
+                    app.finalRecommendLists[whichStop].splice(index, 1);
                   }
+                }
+          });
+        },
+        selectClicked: function(whichStop, index, isSelect, isMoreInfo) {
+          isSelect = !isSelect;
+          var myMark = app.recommendLists[whichStop][index].marker;
+          if(!app.customSelect[myMark.info]) // first time turn to customSelect
+          {
+            delete app.finalRecommendLists[myMark.info];
+            app.finalRecommendLists[myMark.info] = new Array();
+            app.totalPoints -= app.limit;
+          }
+          app.customSelect[myMark.info] = true;
+
+          if(app.finalRecommendLists[myMark.info][myMark.index] == undefined)
+          {
+             app.finalRecommendLists[myMark.info][myMark.index]={name:myMark.title, address:myMark.address};
+             myMark.setIcon(app.iconColors[2]);
+             myMark.setLabel('');
+             app.totalPoints += 1;
+          } else
+          {
+             delete app.finalRecommendLists[myMark.info][myMark.index];
+             app.totalPoints -= 1;
+             myMark.setIcon();
+             myMark.setLabel(''+(myMark.info+1));
+          }
+          var infowindow = app.recommendLists[whichStop][index].infowindow;
+          var selectBtnText = isSelect? 'unselect':'select';
+          var moreInfoBtnText=isMoreInfo? 'less info':'more info';
+
+          infowindow.setContent('<strong>'+myMark.title+'</strong></br>' +
+          '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
+          selectBtnText + '</button><button onclick="app.moreInfoClicked('
+          + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
+        },
+        moreInfoClicked: function(whichStop, index, isSelect, isMoreInfo) {
+            isMoreInfo = !isMoreInfo;
+            var myMark = app.recommendLists[whichStop][index].marker;
+            var selectBtnText = isSelect? 'unselect':'select';
+            var moreInfoBtnText=isMoreInfo? 'less info':'more info';
+
+            var infowindow = app.recommendLists[whichStop][index].infowindow;
+            var fsid = app.recommendLists[whichStop][index].FSid;
+            var detailUrl= 'https://api.foursquare.com/v2/venues/' + fsid + '?client_id='+clientID+'&client_secret='+clientSecret+'&v=20180323';
+            fetch(detailUrl)
+              .then(res => res.json)
+              .then(myJson => {
+                if(myJson.meta.code != '200') {
+                  var name =  myMark.title;
+                  var address = myJson.response.venue.location.address==undefined?"not avaliable":myJson.response.venue.location.address;
+                  var phoneNum = "not avaliable";
+                  var website = myJson.response.venue.url==undefined?"not avaliable":myJson.response.venue.url;
+                  var fsWebsite = myJson.response.venue.canonicalUrl==undefined?"not avaliable":myJson.response.venue.canonicalUrl;
+                  var likeNum = myJson.response.venue.likes.count==undefined?"0":myJson.response.venue.likes.count;
+                  var rating = myJson.response.venue.rating==undefined?"N/A":myJson.response.venue.rating;
+                  var photo = "";
+                  var tip = myJson.response.venue.tips.groups[0].items[0].text==undefined?"not avaliable":myJson.response.venue.tips.groups[0].items[0].text;
+                  var jsonContact = myJson.response.venue.contact;
+                  if(Object.keys(jsonContact).length > 0) {
+                    phoneNum = myJson.response.venue.contact.phone==undefined?"not avaliable":myJson.response.venue.contact.phone;
+                  }
+
+                  if(myJson.response.venue.photos.groups[1].items[0].prefix!=undefined && myJson.response.venue.photos.groups[1].items[0].suffix!=undefined)
+                  {
+                    photo = myJson.response.venue.photos.groups[1].items[0].prefix + app.picSize + myJson.response.venue.photos.groups[1].items[0].suffix;
+                  }
+
+
+                  infowindow.setContent('<strong>' + myMark.title + '</strong></br><p>no more infomation of this place</p></br>' +
+                  '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
+                  selectBtnText + '</button><button onclick="app.moreInfoClicked('
+                  + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
+                } else {
+                  infowindow.setContent('<strong>' + myMark.title + '</strong></br><p>no more infomation of this place</p></br>' +
+                  '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
+                  selectBtnText + '</button><button onclick="app.moreInfoClicked('
+                  + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
+                }
+              })
+              .catch(function(err) {
+                  // Code for handling errors
+                  console.log("fetch function error: " + err);
               });
+
+            infowindow.setContent('<strong>'+myMark.title+'</strong></br><p>Loading</p></br>' +
+            '<button onclick="app.selectClicked(' + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo + ')">' +
+            selectBtnText + '</button><button onclick="app.moreInfoClicked('
+            + whichStop + ',' + index + ',' + isSelect + ',' + isMoreInfo +')">' + moreInfoBtnText + '</button>');
+        },
+        drawRecMarkers: function(whichStop, start){
+
+            app.recommendLists[whichStop].forEach(function(item, index) {
+              if(index >= start)
+              {
+                //for(var index = start; index < app.recommendLists[whichStop].length; index++){
+
+                  item = app.recommendLists[whichStop][index];
+                  var googleGeo, myMark;
+                  var address = "";
+                  if(item.address != undefined) {
+                    address += item.address;
+                  }
+                  if(item.name != undefined) {
+                    address += " " + item.name;
+                  }
+
+                  geocoder.geocode({'address': address}, function(results, status)
+                  {
+                      if (status === 'OK') {
+                          googleGeo = results[0].geometry.location;
+                          myMark = new google.maps.Marker({
+                              map: map,
+                              title: item.name,
+                              // icon:app.iconColors[0],
+                              label:app.markerLabels[whichStop],
+                              animation: google.maps.Animation.DROP,
+                              position: googleGeo,
+                              info:whichStop,
+                              index:index,
+                              address:address
+                          });
+                          var onlyNameInfoWin = new google.maps.InfoWindow({
+                              content: item.name
+                          });
+                          var isSelect = false;
+                          var infowindow = new google.maps.InfoWindow({
+                              content: '<strong>'+item.name+'</strong></br>'+
+                              '<button onclick="app.selectClicked('+ whichStop + ',' + index + ', false, false' + ')">select</button>' +
+                              '<button onclick="app.moreInfoClicked(' + whichStop + ',' + index + ', false, false' + ')">more info</button>'
+                          });
+
+                          myMark.addListener('click', function() {
+                            onlyNameInfoWin.close();
+                            infowindow.open(map, myMark);
+                          });
+                          myMark.addListener('mouseover', function()
+                          {
+                              onlyNameInfoWin.open(map, myMark);
+                          });
+                          myMark.addListener('mouseout', function()
+                          {
+                              onlyNameInfoWin.close();
+                          });
+                          app.recommendLists[whichStop][index].marker = myMark;
+                          app.recommendLists[whichStop][index].infowindow = infowindow;
+                        }
+                        else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT)
+                        {
+                          alert('Please wait, Google map:' + status);
+                          setTimeout(app.drawSingleMarker(), 1000);
+                        }
+                        else
+                        {
+                          alert('Geocode was not successful for the following reason: ' + status
+                          + "\nname:" + item.name + "\naddress:" + item.address);
+                          app.recommendLists[whichStop].splice(index, 1);
+                          if(!app.customSelect[whichStop]){
+                            app.finalRecommendLists[whichStop].splice(index, 1);
+                          }
+                        }
+                  });
+
+              }
 
             });
         },
@@ -386,9 +527,10 @@ var app = new Vue({
         {
           this.fetchCount = 0;
           this.bestRouteName = [0,0,0,0,0];
+          this.bestRouteAddress = [0,0,0,0,0];
           this.distanceMatrixs = new Array(4);
           var stops = Object.keys(app.finalRecommendLists).length;
-          console.log(stops)
+
           if(stops<4 && app.finalRecommendLists[stops] != undefined)
           { //check if the user skip a stop
             alert("Don't leave middle stop blank");
@@ -407,6 +549,12 @@ var app = new Vue({
         reset:function()
         {
           console.log('reset');
+          this.customSelect = {
+            0:false,
+            1:false,
+            2:false,
+            3:false
+          };
           this.stops.splice(0, 4,"Stop#1", "Stop#2", "Stop#3", "Stop#4" );
           // clear previous route display
           for(var i=0; i<4; i++)
@@ -437,6 +585,10 @@ var app = new Vue({
           {
             alert('Please check Go! to get a route first');
             return;
+          }
+          else
+          {
+
           }
           // TODO: if not login alert('please log in');
         },
@@ -515,15 +667,20 @@ var app = new Vue({
 
           console.log("min dest is "+minIndex);
           console.log("****************************");
-          app.bestRouteName[0] = app.distanceMatrixs[0].originAddresses[0];
+          app.bestRouteAddress[0] = app.distanceMatrixs[0].originAddresses[0];
+          app.bestRouteName[0] = {lat: app.latitude, lng: app.longitude};
           for(var i = totalStops; i > 0; i--)
           {
             console.log("backwards: min route is "+minIndex);
-            app.bestRouteName[i] = app.distanceMatrixs[i-1].destinationAddresses[minIndex];
+            app.bestRouteAddress[i] = app.distanceMatrixs[i-1].destinationAddresses[minIndex];
+            var tmp = Object.keys(app.finalRecommendLists[i-1])[minIndex];
+            app.bestRouteName[i] = app.finalRecommendLists[i-1][tmp].name;
+
             minIndex = dist[i][minIndex].parent;
           }
           for(var i = totalStops; i < 4; i++){
             app.bestRouteName.pop();
+            app.bestRouteAddress.pop();
           }
 
           app.showBestRoute(app.bestRouteName, 'WALKING');
@@ -570,7 +727,62 @@ var app = new Vue({
 
         },
         resetLimit: function(){
+          var url = new Array(4);
+          for(var i=0; i<4; i++)
+          {
+            directionsDisplay[i].setMap(null);  //clear route
+            if(!app.stops[i].includes('Stop#'))
+            {
+              if(app.customSelect[i] == false) {
+                app.searchRecommendation(app.stops[i], i);
+              } else
+              {
+                if(this.longitude != undefined && this.latitude != undefined) {
+                    url[i] = this.baseRecUrl + '&ll=' + this.latitude + ',' + this.longitude + '&limit=' + this.limit;
+                } else {
+                    url[i] = this.baseRecUrl + '&near=' + this.near + '&limit=' + this.limit;
+                }
+                // section
+                url[i] += '&section=' + app.stops[i];
+              }
+            }
+          }
 
+
+          url.forEach(function(item, whichStop){
+            if(item != undefined)
+            {
+              // below are customSelect cases
+              if(app.sliderValue["Stop#" + (whichStop+1)]>0)
+              {
+                  url += '&radius=' + (app.sliderValue["Stop#" + (whichStop+1)]*1000);
+              }
+              fetch(item)
+                  .then(response => response.json())
+                  .then(myJson => {
+                      //app.recommendResult = myJson;
+                      var newItemCount = 0;
+                      app.generateRecList(myJson).forEach(function(item, index){
+                        var found = false;
+                        app.recommendLists[whichStop].forEach(function(itemRec, indexRec){
+                          if(!found && itemRec.name == [item.name]) {
+                            found = true;
+                          }
+                        });
+                        if(!found) {
+                          app.recommendLists[whichStop].push(item);
+                          newItemCount += 1;
+                        }
+                      });
+                      app.drawRecMarkers(whichStop, app.recommendLists[whichStop].length-newItemCount);
+                  })
+                  .catch(function(err) {
+                      // Code for handling errors
+                      console.log("fetch function error: " + err);
+                  });
+            }
+
+          });
         },
 
     }, // methods ends here
